@@ -42,7 +42,7 @@ for nDF = 1:stopN %nDF = number of discriminant features
         classifierModel = classifierModel.setTrainData(dataSetTraining,dataLabelTraining);
         
         
-        classifierModel = classifierModel.setModelTypes({'linear'});
+        classifierModel = classifierModel.setModelTypes({'diaglinear','linear'});
 
         % train classifier
         classifierModel = classifierModel.train();
