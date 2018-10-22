@@ -7,7 +7,7 @@ loadingInVars_pietro;
 % features selection
 
 % elegant code per filtrare a cazzo 
-perc = 3;
+perc = 4;
 featuresSelection = (randi([0 1000],1,nFeatures)/10)<=perc;
 nSelectedFeatures = sum(featuresSelection);
 
@@ -46,15 +46,19 @@ set(gca,'xticklabel',modelTypes');
 title('class error');
 legend('train error','test error');
 
-figure;
-bar([trainRes.classificationErrors,testRes.classificationErrors]);
-set(gca,'xticklabel',modelTypes');
-title('classification error');
-legend('train error','test error');
+% figure;
+% bar([trainRes.classificationErrors,testRes.classificationErrors]);
+% set(gca,'xticklabel',modelTypes');
+% title('classification error');
+% legend('train error','test error');
 
 %% PREPARE IN CASE OF GOOD FEATURES
 a = [1:nFeatures];
 selectedFeatures = a(featuresSelection);
+idxTraining = idxSet1;
+%%
+%save('./goodRandomFeatures/linear_03_94F.mat','selectedFeatures','idxTraining');
+% 
 
 % per ora le features migliori sembrerebbero essere quelle del
 % diagquadratic_02_70F.mat e quelle del linear_diaglinear_diagquadratic_01
