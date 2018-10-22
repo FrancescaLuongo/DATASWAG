@@ -10,7 +10,7 @@ rng(seed);
 
 orderedFeatures = rankfeat(trainData,trainLabels,'fisher');
 
-stopN = 1000;
+stopN = 500;
 k_fold = 10;
 cvp = cvpartition(nObservations,'kfold',k_fold);
 
@@ -42,7 +42,7 @@ for nDF = 1:stopN %nDF = number of discriminant features
         classifierModel = classifierModel.setTrainData(dataSetTraining,dataLabelTraining);
         
         
-        classifierModel = classifierModel.setModelTypes({'linear','diaglinear'});
+        classifierModel = classifierModel.setModelTypes({'linear'});
 
         % train classifier
         classifierModel = classifierModel.train();

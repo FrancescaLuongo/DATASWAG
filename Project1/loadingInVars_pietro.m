@@ -4,10 +4,10 @@ clear all; close all; clc;
 
 addpath('usefulFunctions');
 
-testData = load('.\data\testSet.mat');
-testLabels = load('.\data\testLabelEstimation.mat');
-trainLabels = load('.\data\trainLabels.mat');
-trainData = load('.\data\trainSet.mat');
+testData = load('./data/testSet.mat');
+testLabels = load('./data/testLabelEstimation.mat');
+trainLabels = load('./data/trainLabels.mat');
+trainData = load('./data/trainSet.mat');
 
 testData = testData.testData;
 testLabels = testLabels.testLabelEstimation;
