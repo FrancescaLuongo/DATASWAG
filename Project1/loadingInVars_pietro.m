@@ -2,7 +2,6 @@ clear all; close all; clc;
 
 %% IMPORTING DATA
 
-cd('C:\Users\Pietro\Documents\MATLAB\Data Analysis\Project1');
 addpath('usefulFunctions');
 
 testData = load('.\data\testSet.mat');
