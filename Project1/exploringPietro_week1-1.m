@@ -420,3 +420,32 @@ totGiusti = sum(res)
 percGiusti = totGiusti / nObservations
 % non abbastanza XD
 
+
+%% media somma e std
+
+setGlobalRanges(500,800);
+
+meanErrorData = mean(trainErrorData(:,usefulFeaturesRange)')';
+meanCorrectData = mean(trainCorrectData(:,usefulFeaturesRange)')';
+
+distanzaMediaCorrect = (trainCorrectData(:,usefulFeaturesRange)-meanCorrectData);
+distanzaMediaError   = (trainErrorData(:,usefulFeaturesRange)-meanErrorData);
+
+sommaCorrectData =  sum(trainCorrectData(:,usefulFeaturesRange)')';
+sommaErrorData   =  sum(trainErrorData(:,usefulFeaturesRange)')';
+
+
+%%
+plot(usefulFeaturesRange,distanzaMediaCorrect,'g');
+hold on;
+plot(usefulFeaturesRange,distanzaMediaError,'r');
+
+%%
+figure;
+plot(usefulFeaturesRange,trainCorrectData(3,usefulFeaturesRange),'b');
+figure;
+plot(usefulFeaturesRange,trainErrorData(3,usefulFeaturesRange),'r');
+
+
+
+

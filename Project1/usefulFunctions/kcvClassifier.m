@@ -1,17 +1,47 @@
-function [Md1,classErrors,classificationError,modelTypes] = ...
-    kcvClassifier(data,labels,k_fold,mTypes)
+function [errors,successModelTypes] = ...
+    kcvClassifier(data,labels,varargin)
 %KCVCLASSIFIER 
 %   k-fold cross validation classifier: 
 %   usiamo questa funzione per non dover riscrivere ogni volta tuttoz
 %   ritorna il modello e i risultati del training e del test
+
+
+    % GESTIONE DEL VAR ARG IN
+    default_kfold = 10;
+    default_modelTypes = {'linear'};
+    defaultSeed = -1;
+
+    p = inputParser;
+    %addRequired(p,'width',validScalarPosNum);
+    addOptional(p,'kfold',default_kfold);
+    addParameter(p,'modelTypes',default_modelTypes);
+    addParameter(p,'seed',defaultSeed);
+    addParameter(p,'trainErrors',false);
+    parse(p,varargin{:});
     
-    %fprintf('started a %i-fold cv \n',k_fold);
-
+    % INIZIALIZZAZIONE DELLE VARIABILI:
+    k_fold = p.Results.kfold;
+    mTypes = p.Results.modelTypes;
+    seed   = p.Results.seed;
+    
+    if seed < 0
+        seed = 'default';
+    end
+    
     nSamples = size(data,1);
-    cvp = cvpartition(nSamples,'kfold',k_fold);
-
+    
+    rng(seed);
+    defaultCVP = cvpartition(nSamples,'kfold',k_fold);
+    
+    addParameter(p,'customCVP',defaultCVP);
+    parse(p,varargin{:});
+    cvp = p.Results.customCVP;
+    
+    errors = [];
     classErrors = [];
     classificationError = [];
+    trainingClassErrors = [];
+    trainingClassificationError = [];
     
     for fold = 1:k_fold
         clear('classifierModel');
@@ -38,15 +68,29 @@ function [Md1,classErrors,classificationError,modelTypes] = ...
         
         % validation on test subset
         testRes = Md1.structuredResults(dataSetTest,dataLabelTest);
+        
+        if p.Results.trainErrors
+            % test on train dataset
+            trainingRes = Md1.structuredResults(dataSetTraining,dataLabelTraining);
+            trainingClassErrors = [trainingClassErrors,trainingRes.classErrors];
+            trainingClassificationError = [trainingClassificationError,trainingRes.classificationErrors];
+        end
 
         classErrors = [classErrors,testRes.classErrors];
         classificationError = [classificationError,testRes.classificationErrors];
     end
     
-    modelTypes = Md1.getModelTypes();
-    classErrors = mean(classErrors,2);
-    classificationError = mean(classificationError,2);
-
-
+    successModelTypes = Md1.getModelTypes();
+    
+    errors.classErrorsMean = mean(classErrors,2);
+    errors.classificationErrorsMean = mean(classificationError,2);
+    
+    if p.Results.trainErrors
+        errors.trainingClassErrorsMean = mean(trainingClassErrors,2);
+        errors.trainingClassificationErrorsMean = mean(trainingClassificationError,2);
+        errors.diffClassErrorsMean = abs(errors.trainingClassErrorsMean-errors.classErrorsMean);
+        errors.diffClassificationErrorsMean = abs(errors.trainingClassificationErrorsMean-errors.classificationErrorsMean);
+    end
+    
 end
 

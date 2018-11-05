@@ -11,7 +11,7 @@ rng(seed);
 orderedFeatures = rankfeat(trainData,trainLabels,'fisher');
 
 startN = 1;
-stopN = 300;
+stopN = 10;
 k_fold = 10;
 cvp = cvpartition(nObservations,'kfold',k_fold);
 
@@ -22,10 +22,10 @@ tic();
 for nDF = startN:stopN %nDF = number of discriminant features
     selectedFeatures = orderedFeatures(1:nDF);
     
-    [~,cvClassErrors,~,modelTypes] = ...
-        kcvClassifier(trainData(:,selectedFeatures),trainLabels,k_fold,{'linear'});
+    [cvErrors,modelTypes] = ...
+        kcvClassifier(trainData(:,selectedFeatures),trainLabels,'kfold',k_fold,'modelTypes',{'linear'});
         
-    classErrors = [classErrors,cvClassErrors];
+    classErrors = [classErrors,cvErrors.classErrorsMean];
 end
 toc();
 
