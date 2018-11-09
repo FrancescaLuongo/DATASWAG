@@ -2,14 +2,14 @@ function [errors,successModelTypes] = ...
     kcvClassifier(data,labels,varargin)
 %KCVCLASSIFIER 
 %   k-fold cross validation classifier: 
-%   usiamo questa funzione per non dover riscrivere ogni volta tuttoz
+%   usiamo questa funzione per non dover riscrivere ogni volta tutto
 %   ritorna il modello e i risultati del training e del test
 
 
     % GESTIONE DEL VAR ARG IN
     default_kfold = 10;
     default_modelTypes = {'linear'};
-    defaultSeed = -1;
+    defaultSeed = -1;  %TODO ê giusto che il default seed sia negativo?
 
     p = inputParser;
     %addRequired(p,'width',validScalarPosNum);
@@ -25,7 +25,7 @@ function [errors,successModelTypes] = ...
     seed   = p.Results.seed;
     
     if seed < 0
-        seed = 'default';
+        seed = 'default';%TODO aggiungi disp() che dice il cambiamento del seed
     end
     
     nSamples = size(data,1);
