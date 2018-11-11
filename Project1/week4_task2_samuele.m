@@ -48,7 +48,7 @@ tic();
     ffs_kcvClassifier(trainData,trainLabels,...
     'kfold',k_fold,'modelTypes',selectedModels,'priorProbability',[0.3,0.7]);
 
-classErrorsPrior = [classErrorsPrior,cvErrors.classErrorsMean];
+classErrorsPrior = [cvErrors.classErrorsMean];
 
 toc();
 
