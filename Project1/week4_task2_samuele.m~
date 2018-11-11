@@ -26,9 +26,8 @@ toc();
 
 trainDataFfs = trainData(:,sel);
 
-ncol = size(ans,2);
-x = randperm(size(trainData,2),ncol);
-randomColumns = trainData(:,x);
+ncol = size(ans)
+x = randperm(size(data_sample,2),ncol);
+columns = data_sample(:,x);
 
 modelFfsDiaglinear = kcvClassifier(trainDataFfs, trainLabels, 'modelTypes', {'diaglinear'});
-modelRandomColDiaglinear = kcvClassifier(randomColumns, trainLabels, 'modelTypes', {'diaglinear'});
