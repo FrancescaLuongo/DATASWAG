@@ -17,12 +17,15 @@ function [errors,successModelTypes] = ...
     addParameter(p,'modelTypes',default_modelTypes);
     addParameter(p,'seed',defaultSeed);
     addParameter(p,'trainErrors',false);
+    addParameter(p,'priorProbability','empiric');
+    addParame
     parse(p,varargin{:});
     
     % INIZIALIZZAZIONE DELLE VARIABILI:
     k_fold = p.Results.kfold;
     mTypes = p.Results.modelTypes;
     seed   = p.Results.seed;
+    priorProbability = p.Results.priorProbability;
     
     if seed < 0
         seed = 'default';%TODO aggiungi disp() che dice il cambiamento del seed
@@ -59,6 +62,7 @@ function [errors,successModelTypes] = ...
         % initialize classifier
         Md1 = modelClassificationClass();
         Md1 = Md1.setTrainData(dataSetTraining,dataLabelTraining);
+        Md1 = Md1.setPriorProbability(priorProbability);
         
         
         Md1 = Md1.setModelTypes(mTypes);
