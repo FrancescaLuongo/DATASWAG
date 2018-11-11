@@ -82,4 +82,7 @@ legend(modelTypes);
 %% ANOVA
 
 [anovaP,anovaTbl,anovaStats] = anova1(bestClassErrors);
+
+%% Means comparison
+
 comparisonMeans = multcompare(anovaStats);
