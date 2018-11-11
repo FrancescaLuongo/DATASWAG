@@ -18,7 +18,6 @@ function [errors,successModelTypes] = ...
     addParameter(p,'seed',defaultSeed);
     addParameter(p,'trainErrors',false);
     addParameter(p,'priorProbability','empiric');
-    addParame
     parse(p,varargin{:});
     
     % INIZIALIZZAZIONE DELLE VARIABILI:
