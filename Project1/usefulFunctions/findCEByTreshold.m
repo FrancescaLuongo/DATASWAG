@@ -1,21 +1,15 @@
-function classError = findCEByTreshold(selectedData,correctData,treshold)
-%TRESHOLDPLOTTER Summary of this function goes here
+function classError = findCEByLabels(labels,predictions)
+%findCEByLabels Summary of this function goes here
 %   Detailed explanation goes here
 
-% find CE By treshold
+nGroup0 = sum(~labels);
+nGroup1 = sum(labels);
 
-
-idx = selectedData>treshold;
-
-nGroup0 = sum(~correctData);
-nGroup1 = sum(correctData);
-
-nGiusti0 = sum(idx.*(~correctData));
-nGiusti1 = sum(~idx.*(correctData));
+nGiusti0 = sum(predictions.*(~labels));
+nGiusti1 = sum(~predictions.*(labels));
 
 classError = 1/2*(nGroup0-nGiusti0)/nGroup0 ...
     +  1/2*(nGroup1-nGiusti1)/nGroup1;
-
 
 end
 
