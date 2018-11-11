@@ -5,6 +5,7 @@ loadingInVars_pietro;
 %%%%%%%%% LDA/QDA classifiers %%%%%%%%%%%
 
 %% Sequential forward selection
+%TODO ADD ERROR FUNCTION 
 
 fun = @(xT,yT,xt,yt) length(yt)*(immse(yt,predict(fitcdiscr(xT,yT,...
     'discrimtype', 'diaglinear'), xt)));

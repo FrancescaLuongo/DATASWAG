@@ -11,7 +11,7 @@ rng(seed);
 orderedFeatures = rankfeat(trainData,trainLabels,'fisher');
 
 startN = 1;
-stopN = 10;
+stopN = 800;
 k_fold = 10;
 cvp = cvpartition(nObservations,'kfold',k_fold);
 

@@ -5,14 +5,14 @@ loadingInVars_pietro;
 %%%%%%%%% LDA/QDA classifiers %%%%%%%%%%%
 %% SETTA I DATI PER IL TRAINER
 % per la riproducibilità
-% seed = 45;
-% rng(seed);
+seed = 45;
+rng(seed);
 
 orderedFeatures = rankfeat(trainData,trainLabels,'fisher');
 
 % settings
 startN = 1;
-stopN = 10;
+stopN = 100;
 k_outer_fold = 10;
 k_inner_fold = 10;
 modelTypes = {'linear','diaglinear'};
