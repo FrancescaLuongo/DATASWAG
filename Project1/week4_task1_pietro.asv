@@ -2,6 +2,8 @@
 
 loadingInVars_pietro;
 
+%%%%%%%%% LDA/QDA classifiers %%%%%%%%%%%
+
 %% PCA
 setGlobalRanges(688,816);
 
@@ -33,24 +35,41 @@ bar(explained);
 
 %% CROSS VALIDATION PCA
 % per la riproducibilità
-% seed = 45; fanculo la riproducibilità
+seed = 45;
+rng(seed);
 
 startN = 1; 
-stopN = 500; % fino a che numero di features si vuole provare
+stopN = 100; % fino a che numero di features si vuole provare
 k_fold = 10;
 
 classErrors = [];
 
 tic();
-[cvErrors,modelTypes] = ...
-    pca_kcvClassifier(trainData,trainLabels,'kfold',k_fold, ...
-    'startN',startN,'stopN',stopN, ...
-    'modelTypes',{'linear'});
 
-classErrors = [classErrors,cvErrors.classErrorsMean];
+for nPCAF = startN:stopN %nPCAF = number of PCA features to use
+    
+    [cvErrors,modelTypes] = ...
+        pca_kcvClassifier(trainData,trainLabels,'kfold',k_fold,...
+        'startN',startN,...
+        'modelTypes',{'linear'});
+        
+    classErrors = [classErrors,cvErrors.classErrorsMean];
+end
 toc();
 
+
+
+
 %%
-plot(classErrors);
-xlabel('# principal components');
-ylabel('Class error');
+x = startN:stopN;
+
+figure;
+hold on;
+
+for i = 1:length(modelTypes)
+    plot(x,classErrors(i,:));
+end
+legend(modelTypes);
+
+
+
