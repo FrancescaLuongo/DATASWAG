@@ -12,7 +12,7 @@ trainingSetLabels = trainLabels(maskSelection == 1);
 validationSet = trainData(~maskSelection == 1,:);
 validationSetLabels = trainLabels(~maskSelection == 1);
 
-rangeFeatures = 1:1800;
+rangeFeatures = 500:1200;
 tresholds = [];
 
 for feature = rangeFeatures % trovo i migliori treshold per ogni feature
@@ -30,9 +30,16 @@ for n = 1:numel(rangeFeatures) % trovo i migliori treshold per ogni feature
     classErrors = [classErrors;feature,tresholds(n,2),classError];
 end
 
-figure;
-scatter(rangeFeatures,classErrors(:,3));
+%%
+erroriNorm = classErrors(:,3);
+inverted = (1-(erroriNorm>0.5).*erroriNorm).*(erroriNorm>0.5);
+erroriNorm = (erroriNorm<=0.5).*erroriNorm + inverted;
 
+figure;
+scatter(rangeFeatures,erroriNorm,'k*');
+
+xlabel({'features'})
+ylabel('Min class error')
 
 
 %% trovati i più bassi, vai di probabilità semplici

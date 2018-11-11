@@ -102,10 +102,46 @@ plot(usefulFeaturesRange,diff(trainErrorData(:,usefulFeaturesRange))','r');
 figure;
 hold on;
 
-setGlobalRanges(600,750);
+edges = 0:0.02:1;
 
-histogram(trainErrorData(:,usefulFeaturesRange),'FaceColor','r');
-histogram(trainCorrectData(:,usefulFeaturesRange),'FaceColor','g');
+%setGlobalRanges(600,750);
+
+histogram(trainCorrectData(:,711),edges,'Normalization','probability','FaceColor','g');
+histogram(trainErrorData(:,711),edges,'Normalization','probability','FaceColor','r');
+
+
+legend('Correct','Error');
+xlabel({'Feature 711','(b)'})
+ylabel('Normalized probability')
+
+%%
+
+figure;
+hold on;
+histogram(trainCorrectData(:,729),edges,'Normalization','probability','FaceColor','g');
+histogram(trainErrorData(:,729),edges,'Normalization','probability','FaceColor','r');
+
+legend('Correct','Error');
+xlabel({'Feature 729','(c)'})
+ylabel('Normalized probability')
+
+
+%%
+
+windowSize = 128;
+nStart = 640;
+
+h = zeros(1,windowSize); p = zeros(1,windowSize);
+
+for n=1:windowSize
+    [h(n),p(n)] = ttest2(trainCorrectData(:,n+nStart),trainErrorData(:,n+nStart));
+end
+
+plot(nStart:(nStart+windowSize-1),p,'k*');
+
+title('p-values vs features');
+xlabel({'Features','(a)'});
+ylabel('p-value');
 
 
 %% min e max
@@ -225,9 +261,9 @@ scatter(bestMoving(:,1),bestMoving(:,2));
 
 bestMoving = [];
 
-for i = 600:1800 
+for i = 1090:1100 
     [~,~,~,classError,minVal,minIndex] = tresholdPlotter(trainData(:,i),trainLabels);
-    bestTreshold = classError(minIndex,2);
+    bestTreshold = classError(minIndex,1);
     bestMoving = [bestMoving;i,minVal,bestTreshold];
 end
 
@@ -240,9 +276,34 @@ treshold = bestMoving(I,3);
 
 l = length(trainData(:,bestFeature));
 
+
+scatter(1:nCorrectObservations,trainCorrectData(:,bestFeature),'b');
+hold on;
+scatter((nCorrectObservations+1):(nCorrectObservations+nErrorObservations),trainErrorData(:,bestFeature),'r');
+
+xlabel({'Observations','(a)'});
+ylabel('Voltage');
+
+% figure;
+% scatter(1:l,trainData(:,bestFeature),[],trainLabels);
+hline(treshold,':k');
+legend('Correct','Error','Treshold');
+
+
+%% Evoluzione classError e accuracy con la best feature trovata
+
+[accuracy,~,~,classError,minVal,minIndex] = tresholdPlotter(trainData(:,bestFeature),trainLabels);
+bestTreshold = classError(minIndex,1);
+
 figure;
-scatter(1:l,trainData(:,bestFeature),[],trainLabels);
-hline(treshold);
+plot(classError(:,1),classError(:,2));
+hold on;
+plot(accuracy(:,1),1-accuracy(:,2));
+
+xlabel({'Treshold','(b)'});
+ylabel('Error');
+legend('Class Error','Classification Error');
+
 
 
 %% AVG in range ricerca con PIU FEATURES classError (non completo, ma secondo me non funzionerà prendendo i minimi (overfitting))
@@ -354,7 +415,7 @@ plot(classError(:,1),classError(:,2))
 
 %% treshold con una feature
 
-bestFeature = 1514;
+bestFeature = 1093;
 
 [tresholdAccuracy,maxValue,maxIndex] = tresholdPlotter(trainData(:,bestFeature),trainLabels);
 
@@ -364,9 +425,11 @@ bestFeature = 1514;
 foundedTreshold = tresholdAccuracy(maxIndex,1);
 
 figure;
-scatter(1:nObservations,trainData(:,bestFeature),[],trainLabels);
+scatter(1:nCorrectObservations,trainCorrectData(:,bestFeature),'b');
+hold on;
+scatter((nCorrectObservations+1):(nCorrectObservations+nErrorObservations),trainErrorData(:,bestFeature),'r');
 
-
+hline(foundedTreshold);
 
 
 %% histogram per capire
@@ -442,9 +505,36 @@ plot(usefulFeaturesRange,distanzaMediaError,'r');
 
 %%
 figure;
-plot(usefulFeaturesRange,trainCorrectData(3,usefulFeaturesRange),'b');
+plot(usefulFeaturesRange,trainCorrectData(10:100,usefulFeaturesRange),'b');
+hold on;
+plot(usefulFeaturesRange,trainErrorData(29:130,usefulFeaturesRange),'r');
+
+%% AVG MOVING FILTER
+
+setGlobalRanges(500,800);
+
+B = 1/10*ones(10,1);
+amfCorrect = filter(B,1,trainCorrectData(:,usefulFeaturesRange));
+
+plot(usefulFeaturesRange,amfCorrect,'b');
+
+amfErrors = filter(B,1,trainErrorData(:,usefulFeaturesRange));
+hold on;
+plot(usefulFeaturesRange,amfErrors,'r');
+
+%% diff AVG moving filter
 figure;
-plot(usefulFeaturesRange,trainErrorData(3,usefulFeaturesRange),'r');
+damfCorrect = diff(amfCorrect)';
+damfErrors = diff(amfErrors)';
+plot(usefulFeaturesRange,damfCorrect,'g');
+hold on;
+plot(usefulFeaturesRange,damfErrors,'r');
+
+figure;
+hold on;
+
+histogram(trainErrorData(:,usefulFeaturesRange),'FaceColor','r');
+histogram(trainCorrectData(:,usefulFeaturesRange),'FaceColor','g');
 
 
 

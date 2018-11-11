@@ -15,7 +15,7 @@ startN = 1;
 stopN = 100;
 k_outer_fold = 10;
 k_inner_fold = 10;
-modelTypes = {'linear','diaglinear'};
+modelTypes = {'linear'};
 
 
 % attenzione, non so se è giusto, ma le partition che si creano negli inner
