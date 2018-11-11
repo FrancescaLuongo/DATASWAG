@@ -32,3 +32,23 @@ randomColumns = trainData(:,x);
 
 modelFfsDiaglinear = kcvClassifier(trainDataFfs, trainLabels, 'modelTypes', {'diaglinear'});
 modelRandomColDiaglinear = kcvClassifier(randomColumns, trainLabels, 'modelTypes', {'diaglinear'});
+
+%% FFS IN KCV
+
+seed = 45;
+rng(seed);
+k_fold = 10;
+selectedModels = {'diagquadratic'};
+
+classErrorsPrior = [];
+
+tic();
+
+[cvErrors,modelTypes] = ...
+    ffs_kcvClassifier(trainData,trainLabels,...
+    'kfold',k_fold,'modelTypes',selectedModels,'priorProbability',[0.3,0.7]);
+
+classErrorsPrior = [classErrorsPrior,cvErrors.classErrorsMean];
+
+toc();
+
