@@ -79,5 +79,7 @@ figure;
 bar(bestClassErrors);
 legend(modelTypes);
 
+%% ANOVA
 
-
+[anovaP,anovaTbl,anovaStats] = anova1(bestClassErrors);
+comparisonMeans = multcompare(anovaStats);
