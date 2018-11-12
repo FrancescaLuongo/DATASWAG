@@ -1,0 +1,33 @@
+%% LOADING DATA & VARS
+
+loadingInVars_pietro;
+
+%% 
+
+CEs = [];
+
+rng(45);
+cvp = cvpartition(nObservations,'kfold',10);
+
+for endF = 1:5:200
+
+    orderedFeatures = rankfeat(trainData,trainLabels,'fisher');
+
+    
+
+    % selecting data
+    dataSetTraining = trainData(idxSetTraining,orderedFeatures(1:endF));
+    dataLabelTraining = trainLabels(idxSetTraining);
+    dataSetTest = trainData(idxSetTest,orderedFeatures(1:endF));
+    dataLabelTest = trainLabels(idxSetTest);
+
+    % initialize classifier
+    classifier_linear = fitcdiscr(dataSetTraining,dataLabelTraining,'DiscrimType','diagquadratic');
+
+    yhat_linear = predict(classifier_linear,dataSetTest);
+    
+    CEs = [CEs,findCEByLabels(dataLabelTest,yhat_linear)];
+end
+figure;
+plot(CEs);
+    

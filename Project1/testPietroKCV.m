@@ -5,14 +5,12 @@ loadingInVars_pietro;
 %%%%%%%%% LDA/QDA classifiers %%%%%%%%%%%
 %% SETTA I DATI PER IL TRAINER
 % per la riproducibilità
-seed = 10;
-rng(seed);
 
-k_fold = 6;
-modelTypes = {'linear'};
+k_fold = 20;
+modelTypes = {'linear','diagquadratic'};
 startF = 1;
-endF = 500;
-stepF = 2;
+endF = 150;
+stepF = 5;
 
 tic();
 
@@ -23,9 +21,10 @@ kcv = kcv.setData(trainData,trainLabels);
 kcv = kcv.setKFold(k_fold);
 kcv = kcv.setModelTypes(modelTypes);
 kcv = kcv.setTrainErrors(false);
+kcv = kcv.setPriorProbability('empirical');
 
 % se vogliamo un feature selection INSIDE la cv
-kcv = kcv.setCV_type('normal'); % fisher, normal, pca, ...
+kcv = kcv.setCV_type('fisher'); % fisher, normal, pca, ...
 
 % se vogliamo variare dei parametri, ex: nFeatures varia il numero di
 % features da prendere
@@ -43,10 +42,14 @@ x = startF:stepF:endF;
 
 figure;
 hold on;
-% res = kcv.getResultsByType('diagquadratic','classErrorsMean');
-% plot(x,res)
 res = kcv.getResultsByType('linear','classErrorsMean');
 plot(x,res)
+res = kcv.getResultsByType('diagquadratic','classErrorsMean');
+plot(x,res)
+
+legend(modelTypes);
+xlabel({'number of features','(b)'});
+ylabel('Class errors mean');
 
 
 %% PROVA NESTED

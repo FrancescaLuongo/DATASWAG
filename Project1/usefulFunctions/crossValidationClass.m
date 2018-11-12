@@ -152,7 +152,7 @@ classdef crossValidationClass
         end
         
         function res = getResultsByType(obj,modelType,errorType)
-            iModelType = find(contains(obj.types,modelType));
+            iModelType = find(strcmp(obj.types,modelType));
             res = [];
             for variation = 1:size(obj.errors,2)
                 errs = getfield(obj.errors{1,variation},errorType);
@@ -164,8 +164,7 @@ classdef crossValidationClass
     
     methods(Access = private)
         function obj = initializeCVP(obj)
-            nSamples = size(obj.data,1);
-            obj.cvp = cvpartition(nSamples,'kfold',obj.k_fold);
+            obj.cvp = cvpartition(obj.labels,'kfold',obj.k_fold);
         end
         
         function Mdl = initializeClassifier(obj)
