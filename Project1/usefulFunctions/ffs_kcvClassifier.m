@@ -59,7 +59,7 @@ function [errors,successModelTypes] = ...
         fun = @(xT,yT,xt,yt) length(yt)*(findCEByLabels(yt,predict(fitcdiscr(xT,yT,...
             'discrimtype', 'diagquadratic'), xt)));
 
-        opt = statset('Display','iter','MaxIter',100);
+        opt = statset('Display','iter','MaxIter',100,'Useparallel', true);
 
         seqKFold=10;
         

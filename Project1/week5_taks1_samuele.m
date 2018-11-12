@@ -74,15 +74,27 @@ for outerFold = 1:k_outer_fold
         std([outerCvErrors(outerFold,:).classErrorsMean]')];
 end
 
+
 %% t-TEST
 
-[hLinear, pLinear] = ttest(bestClassErrors(1,:), 0.5);
-[hDiagLinear, pDiagLinear] = ttest(bestClassErrors(2,:), 0.5);
+hNormal = kstest(bestClassErrors(3,:))
 
+
+[hLinear, pLinear] = ttest(bestClassErrors(:,1), 0.5);
+[hDiagLinear, pDiagLinear] = ttest(bestClassErrors(:,2), 0.5);
+[hDiagQuadratic, pDiagQuadratic] = ttest(bestClassErrors(:,3), 0.5);
+
+table = array2table ((bestClassErrors(:,3)).','VariableNames',{'Fold1','Fold2'...
+    ,'Fold3', 'Fold4','Fold5','Fold6','Fold7','Fold8','Fold9','Fold10'});
+
+
+
+disp(hLinear);
+disp(hDiagLinear);
+disp(hDiagQuadratic);
 disp(pLinear);
 disp(pDiagLinear);
-%We can not reject the null-hypothesis that the distribution comes
-%from a distribution with mean 0.5 with a 0.05 probability because 
-%the ttest returns us a p value too high.
+disp(pDiagQuadratic);
+
 
 
