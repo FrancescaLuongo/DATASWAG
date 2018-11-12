@@ -22,30 +22,70 @@ dataLabel2 = trainLabels(idxSet2);
 %% TRAIN ON SET 1
 
 % INIZIALIZZA
-modelClass1 = modelClassificationClass();
-modelClass1 = modelClass1.setTrainData(dataSet1,dataLabel1);
+mClass = modelClassificationClass();
+mClass = mClass.setTrainData(dataSet1,dataLabel1);
 
 %modelClass1 = modelClass1.setPriorProbability('uniform');
 
 % ALLENA
-modelClass1 = modelClass1.train();
-modelTypes = modelClass1.getModelTypes();
+mClass = mClass.train();
+modelTypes = mClass.getModelTypes();
 
 %% ERRORS:
 % TRAIN ERROR:
-trainRes = modelClass1.structuredResults(dataSet1,dataLabel1);
-testRes = modelClass1.structuredResults(dataSet2,dataLabel2);
+trainRes = mClass.structuredResults(dataSet1,dataLabel1);
+testRes = mClass.structuredResults(dataSet2,dataLabel2);
+
+
+%% PRIOR P UNIFORM
+
+% INIZIALIZZA
+mClassUniform = modelClassificationClass();
+mClassUniform = mClassUniform.setTrainData(dataSet1,dataLabel1);
+
+% SET PRIOR PROBABILITY
+mClassUniform = mClassUniform.setPriorProbability('uniform');
+
+% ALLENA
+mClassUniform = mClassUniform.train();
+modelTypes = mClassUniform.getModelTypes();
+
+%% ERRORS:
+% TRAIN ERROR:
+trainResUniform = mClassUniform.structuredResults(dataSet1,dataLabel1);
+testResUniform = mClassUniform.structuredResults(dataSet2,dataLabel2);
+
+
+%% PRIOR P DEFINED
+
+% INIZIALIZZA
+mClassPrior = modelClassificationClass();
+mClassPrior = mClassPrior.setTrainData(dataSet1,dataLabel1);
+
+% SET PRIOR PROBABILITY
+mClassPrior = mClassPrior.setPriorProbability([0.3,0.7]);
+
+% ALLENA
+mClassPrior = mClassPrior.train();
+modelTypes = mClassPrior.getModelTypes();
+
+%% ERRORS:
+% TRAIN ERROR:
+trainResPrior = mClassPrior.structuredResults(dataSet1,dataLabel1);
+testResPrior = mClassPrior.structuredResults(dataSet2,dataLabel2);
 
 
 %% AND PLOT
 figure;
-bar([trainRes.classErrors,testRes.classErrors]);
+bar([trainResPrior.classErrors,testResPrior.classErrors]);
 set(gca,'xticklabel',modelTypes');
 title('class error');
 legend('train error','test error');
+xlabel('(a)');
 
+%%
 figure;
-bar([trainRes.classificationErrors,testRes.classificationErrors]);
+bar([trainResPrior.classificationErrors,testResPrior.classificationErrors]);
 set(gca,'xticklabel',modelTypes');
 title('classification error');
 legend('train error','test error');

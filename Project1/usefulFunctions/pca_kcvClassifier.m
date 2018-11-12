@@ -57,7 +57,6 @@ function [errors,successModelTypes] = ...
         dataLabelTraining = labels(idxSetTraining);
         dataSetTest = data(idxSetTest,:);
         dataLabelTest = labels(idxSetTest);
-        testScore = dataSetTest;
         
         % center test data
         testScore = bsxfun(@minus, dataSetTest, mu);

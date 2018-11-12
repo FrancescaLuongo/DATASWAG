@@ -5,7 +5,7 @@ loadingInVars_pietro;
 %%%%%%%%% LDA/QDA classifiers %%%%%%%%%%%
 %% SETTA I DATI PER IL TRAINER
 % features selection
-step = 50; % step = 1 per averle tutte
+step = 10; % step = 1 per averle tutte
 featuresSelection = 1:step:nFeatures;
 nSelectedFeatures = size(featuresSelection,2);
 featuresSubset = trainData(:,featuresSelection);
@@ -15,7 +15,7 @@ featuresSubset = trainData(:,featuresSelection);
 % INIZIALIZZA
 mClass = modelClassificationClass();
 mClass = mClass.setTrainData(featuresSubset,trainLabels);
-% mClass = mClass.setModelTypes({'linear','diaglinear','diagquadratic'});
+mClass = mClass.setModelTypes({'linear','diaglinear','diagquadratic'});
 
 % ALLENA
 mClass = mClass.trainAndCalc();
@@ -32,7 +32,7 @@ legend('class error','classification error');
 % INIZIALIZZA
 mClassUniform = modelClassificationClass();
 mClassUniform = mClassUniform.setTrainData(featuresSubset,trainLabels);
-% mClassUniform = mClassUniform.setModelTypes({'linear','diaglinear','diagquadratic'});
+mClassUniform = mClassUniform.setModelTypes({'linear','diaglinear','diagquadratic'});
 
 % SET PRIOR PROBABILITY
 mClassUniform = mClassUniform.setPriorProbability('uniform');
@@ -52,7 +52,7 @@ legend('class error','classification error');
 % INIZIALIZZA
 mClassPrior = modelClassificationClass();
 mClassPrior = mClassPrior.setTrainData(featuresSubset,trainLabels);
-% mClassPrior = mClassPrior.setModelTypes({'linear','diaglinear','diagquadratic'});
+mClassPrior = mClassPrior.setModelTypes({'linear','diaglinear','diagquadratic'});
 
 % SET PRIOR PROBABILITY
 mClassPrior = mClassPrior.setPriorProbability([0.3,0.7]);

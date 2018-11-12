@@ -41,7 +41,7 @@ for fold = 1:k_fold
     % dimensione della matrice finale non sarà valida
     classifierModel = classifierModel.setModelTypes(modelTypes);
     % SET PRIOR PROBABILITY
-    classifierModel = classifierModel.setPriorProbability([0.3,0.7]);
+    classifierModel = classifierModel.setPriorProbability('empirical');
     
     % train classifier
     classifierModel = classifierModel.train();
@@ -64,14 +64,16 @@ end
 %% PLOT
 
 meanClassErrorsTrain = mean(classErrorsTrain,2);
-meanClassErrorsTest = mean(classErrorsTest,2);
+meanClassErrorsTestEmpirical = mean(classErrorsTest,2);
+
+%%
 
 figure;
-bar([meanClassErrorsTrain,meanClassErrorsTest]);
-set(gca,'xticklabel',modelTypes');
+bar([meanClassErrorsTestEmpirical,meanClassErrorsTestUniform,meanClassErrorsTestPrior]);
+set(gca,'xticklabel',{'Empirical','Uniform','Defined'});
 title('class error');
-legend('train error','test error');
-xlabel('(b)');
+legend(modelTypes);
+xlabel('(c)');
 
 
 

@@ -1,12 +1,13 @@
 function [errors,successModelTypes] = ...
-    ffs_kcvClassifier(data,labels,varargin)
-%FFR_KCVCLASSIFIER 
+    fisher_kcvClassifier(data,labels,varargin)
+%FISHER_KCVCLASSIFIER 
 %   yolo
+
 
     % GESTIONE DEL VAR ARG IN
     default_kfold = 10;
     default_modelTypes = {'linear'};
-    defaultSeed = -1;  %TODO ê giusto che il default seed sia negativo?
+    defaultSeed = -1;
 
     p = inputParser;
     %addRequired(p,'width',validScalarPosNum);
@@ -14,17 +15,19 @@ function [errors,successModelTypes] = ...
     addParameter(p,'modelTypes',default_modelTypes);
     addParameter(p,'seed',defaultSeed);
     addParameter(p,'trainErrors',false);
-    addParameter(p,'priorProbability','empiric');
+    addParameter(p,'startN',20);
+    addParameter(p,'stopN',20);
     parse(p,varargin{:});
     
     % INIZIALIZZAZIONE DELLE VARIABILI:
     k_fold = p.Results.kfold;
     mTypes = p.Results.modelTypes;
     seed   = p.Results.seed;
-    priorProbability = p.Results.priorProbability;
+    startN = p.Results.startN;
+    stopN   = p.Results.stopN;
     
     if seed < 0
-        seed = 'default';%TODO aggiungi disp() che dice il cambiamento del seed
+        seed = 'shuffle';
     end
     
     nSamples = size(data,1);
@@ -43,7 +46,6 @@ function [errors,successModelTypes] = ...
     trainingClassificationError = [];
     
     for fold = 1:k_fold
-        clear('classifierModel');
 
         % setting masks
         idxSetTraining = cvp.training(fold);
@@ -55,44 +57,45 @@ function [errors,successModelTypes] = ...
         dataSetTest = data(idxSetTest,:);
         dataLabelTest = labels(idxSetTest);
         
-        % selecting features with ffs:
-        fun = @(xT,yT,xt,yt) length(yt)*(findCEByLabels(yt,predict(fitcdiscr(xT,yT,...
-            'discrimtype', 'diagquadratic'), xt)));
+        classErrorsNF = [];
+        classificationErrorNF = [];
+        trainingClassErrorsNF = [];
+        trainingClassificationErrorNF = [];
+        
+        for currentStop = startN:stopN
+            
+            orderedFeatures = rankfeat(dataSetTraining,dataLabelTraining,'fisher');
+            selectedFeatures = orderedFeatures(startN:currentStop);
+            
+            % initialize classifier
+            clear('Md1');
+            Md1 = modelClassificationClass();
+            Md1 = Md1.setTrainData(dataSetTraining(:,selectedFeatures),dataLabelTraining);
 
-        opt = statset('Display','iter','MaxIter',100);
 
-        seqKFold=10;
-        
-        nTraining = size(data,1);
-        CrossValidationPartition = cvpartition(nObservations,'KFold',seqKFold);
+            Md1 = Md1.setModelTypes(mTypes);
 
-        sel = sequentialfs(fun,trainData,trainLabels,...
-            'cv',CrossValidationPartition,'options',opt);
-        
+            % train classifier
+            Md1 = Md1.train();
 
-        % initialize classifier
-        Md1 = modelClassificationClass();
-        Md1 = Md1.setTrainData(dataSetTraining(:,sel),dataLabelTraining);
-        Md1 = Md1.setPriorProbability(priorProbability);
-        
-        
-        Md1 = Md1.setModelTypes(mTypes);
+            % validation on test subset
+            testRes = Md1.structuredResults(dataSetTest(:,selectedFeatures),dataLabelTest);
 
-        % train classifier
-        Md1 = Md1.train();
-        
-        % validation on test subset
-        testRes = Md1.structuredResults(dataSetTest(:,sel),dataLabelTest);
-        
-        if p.Results.trainErrors
-            % test on train dataset
-            trainingRes = Md1.structuredResults(dataSetTraining,dataLabelTraining);
-            trainingClassErrors = [trainingClassErrors,trainingRes.classErrors];
-            trainingClassificationError = [trainingClassificationError,trainingRes.classificationErrors];
+            if p.Results.trainErrors
+                % test on train dataset
+                trainingRes = Md1.structuredResults(dataSetTraining(:,selectedFeatures),dataLabelTraining);
+            end
+
+            classErrorsNF = [classErrorsNF;testRes.classErrors];
+            classificationErrorNF = [classificationErrorNF;testRes.classificationErrors];
+
+            trainingClassErrorsNF = [trainingClassErrorsNF;trainingRes.classErrors];
+            trainingClassificationErrorNF = [trainingClassificationErrorNF;trainingRes.classificationErrors];
         end
-
-        classErrors = [classErrors,testRes.classErrors];
-        classificationError = [classificationError,testRes.classificationErrors];
+        classErrors = [classErrors,classErrorsNF];
+        classificationError = [classificationError,classificationErrorNF];
+        trainingClassErrors = [trainingClassErrors,trainingClassErrorsNF];
+        trainingClassificationError = [trainingClassificationError,trainingClassificationErrorNF];
     end
     
     successModelTypes = Md1.getModelTypes();
