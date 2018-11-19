@@ -19,18 +19,25 @@ testData  = Data.Data(mTrainData+1:mData,:);
 testX = Data.PosX(mTrainData+1:mData,:);
 testY = Data.PosY(mTrainData+1:mData,:);
 
+[mTestData, nTestData] = size(testData);
 
 %% Normalization
 
-trainDataMeans = mean(trainData);
-trainDataSTD = std(trainData);
+[normalizedTrainData,mu,sigma] = zscore(trainData);
 
-%Need to normalize data here
+for index = 1:mTestData
+    testData(index,:) = (testData(index,:)-mu)./sigma;
+end
 
 %% PCA
 
-pcaCoeff = pca(trainData);
+pcaCoeff = pca(normalizedTrainData,'Centered','off');
 
-transformedTrainingData = trainData*pcaCoeff;
+projectedTrainingData = normalizedTrainData*pcaCoeff;
 
-scatter(transformedTrainingData(:,1),transformedTrainingData(:,2));
+scatter3(projectedTrainingData(:,1),projectedTrainingData(:,2),projectedTrainingData(:,3));
+
+%% Regression
+I = ones(mTrainData,1);
+FM = projectedTrainingData(:,1:2);
+
