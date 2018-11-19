@@ -41,3 +41,4 @@ scatter3(projectedTrainingData(:,1),projectedTrainingData(:,2),projectedTraining
 I = ones(mTrainData,1);
 FM = projectedTrainingData(:,1:2);
 
+X = [ I FM ];
