@@ -9,11 +9,11 @@ loadingInVars_pietro;
 
 tic();
 fun = @(xT,yT,xt,yt) length(yt)*(findCEByLabels(yt,predict(fitcdiscr(xT,yT,...
-    'discrimtype', 'diaglinear'), xt)));
+    'discrimtype', 'linear'), xt)));
 
 opt = statset('Display','iter','MaxIter',100);
 
-kfold=3;
+kfold=10;
 CrossValidationPartition = cvpartition(nObservations,'KFold',kfold);
 
 [sel,hst] = sequentialfs(fun,trainData,trainLabels,...
@@ -30,8 +30,8 @@ ncol = size(ans,2);
 x = randperm(size(trainData,2),ncol);
 randomColumns = trainData(:,x);
 
-modelFfsDiaglinear = kcvClassifier(trainDataFfs, trainLabels, 'modelTypes', {'diaglinear'});
-modelRandomColDiaglinear = kcvClassifier(randomColumns, trainLabels, 'modelTypes', {'diaglinear'});
+modelFfsDiaglinear = kcvClassifier(trainDataFfs, trainLabels, 'modelTypes', {'diagquadratic'});
+modelRandomColDiaglinear = kcvClassifier(randomColumns, trainLabels, 'modelTypes', {'diagquadratic'});
 
 %% FFS IN KCV
 
