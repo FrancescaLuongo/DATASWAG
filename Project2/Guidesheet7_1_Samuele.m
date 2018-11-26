@@ -5,6 +5,7 @@ clc;
 %% Loading data
 
 Data = load('./Data/Data.mat');
+addpath('functions');
 
 [mData, nData] = size(Data.Data);
 
@@ -63,7 +64,7 @@ immseTrainX = immse(trainX, XOrder1*bX);
 immseTrainY = immse(trainY, XOrder1*bY);
 
 immseTestX = immse(testX, testDataXOrder1*bX); 
-immseTestY = immse(testY, testDataXOrder1*bX); %Y plutot non?
+immseTestY = immse(testY, testDataXOrder1*bY); %Y plutot non?
 
 %Ordre 2 Regressor (polynomial)
 XOrder2 = [ I FM FM.^2];
@@ -77,7 +78,7 @@ immseTrainX = immse(trainX, XOrder2*bX);
 immseTrainY = immse(trainY, XOrder2*bY);
 
 immseTestX = immse(testX, testDataXOrder2*bX);
-immseTestY = immse(testY, testDataXOrder2*bX); 
+immseTestY = immse(testY, testDataXOrder2*bY); 
 
 %% Regression with for loop integration of features (ordre 1)
 
