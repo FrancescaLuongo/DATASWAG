@@ -9,5 +9,5 @@ if order == 2
 end
 
    regression = regress(Data, XOrder);
-   performance = immse(Data, XOrder*regression);
+   performance = immse(Data, XOrder*regression); % mean squared error
 end

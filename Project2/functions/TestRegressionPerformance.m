@@ -8,5 +8,5 @@ if order == 2
    XtestOrder = [ I FM FM.^2];
 end
 
-   performance = immse(Data, XtestOrder*comparedRegression);
+   performance = immse(Data, XtestOrder*comparedRegression); % mean squared error
 end
