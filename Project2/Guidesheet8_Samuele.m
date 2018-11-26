@@ -54,4 +54,4 @@ immseTestY = immse(testY, testDataXOrder1*bX);
 %% LASSO
 
 [bXLasso, statLasso] = lasso(trainData, trainX, 'CV', 10,...
-    'Lambda', logspace(-10, 0, 15))
+    'Lambda', logspace(-10, 0, 15), 'UseParallel', true)
