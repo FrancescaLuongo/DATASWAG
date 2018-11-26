@@ -49,7 +49,7 @@ testI = ones(mTestData,1);
 %train Data in PC space, only using two features for speed
 FM = projectedTrainingData(:,1:2);
 %test Data in PC space, only using two features for speed
-testFM = testData(:,1:2);
+testFM = projectedTestData(:,1:2);
 
 %Ordre 1 Regressor
 XOrder1 = [ I FM ];
@@ -82,15 +82,15 @@ immseTestY = immse(testY, testDataXOrder2*bY);
 
 %% Regression with for loop integration of features (ordre 1)
 
-nstep = 50; %nb de features que veut prendre
+nstep = 20; %nb de features que veut prendre
 [exp,nbFeatures] = size(projectedTrainingData(1,:));%nb de features dans la PCA
 extractedFeatures = [];
-
+% nbFeatures=150;
 for n = 1:nstep:nbFeatures
     %regression on the train set, ajoute une feature et fait la regression
      % peut prendre features dans l'ordre ou mieux random?
     addedFeatures = projectedTrainingData(:,1:n);
-    testaddedFeatures = testData(:,1:n);
+    testaddedFeatures = projectedTestData(:,1:n);
     
     [bX1,perfTrainX1] = TrainRegression(trainX,addedFeatures,1);
     [bY1,perfTrainY1] = TrainRegression(trainY,addedFeatures,1);
