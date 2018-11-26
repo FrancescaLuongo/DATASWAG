@@ -48,7 +48,7 @@ immseTrainX = immse(trainX, XOrder1*bX);
 immseTrainY = immse(trainY, XOrder1*bY);
 
 immseTestX = immse(testX, testDataXOrder1*bX);
-immseTestY = immse(testY, testDataXOrder1*bX);
+immseTestY = immse(testY, testDataXOrder1*bY);
 
 
 %% LASSO
