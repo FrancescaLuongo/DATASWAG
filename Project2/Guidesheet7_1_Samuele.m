@@ -82,10 +82,10 @@ immseTestY = immse(testY, testDataXOrder2*bY);
 
 %% Regression with for loop integration of features (ordre 1)
 
-nstep = 20; %nb de features que veut prendre
+nstep = 50; %nb de features que veut prendre
 [exp,nbFeatures] = size(projectedTrainingData(1,:));%nb de features dans la PCA
 extractedFeatures = [];
-% nbFeatures=150;
+% nbFeatures=100;
 for n = 1:nstep:nbFeatures
     %regression on the train set, ajoute une feature et fait la regression
      % peut prendre features dans l'ordre ou mieux random?
@@ -108,8 +108,10 @@ for n = 1:nstep:nbFeatures
     plot(n,perfTestX1,'cx',n,perfTestY1,'rx',n,perfTestX2,'gx',n,perfTestY2,'bx')
 %   plot(bX1,bY1,'o')
     hold on;
-    
-    
     plot(n,perfTrainX1,'co-', n, perfTrainY1, 'ro-',n,perfTrainX2,'go-', n, perfTrainY2, 'bo-')
+    
+    legend('Performance test X regression degré 1','Performance test Y regression degré 1', ...
+       'Performance test X regression degré 2' ,'Performance test Y regression degré 2','p.train x regr degr 1', ...
+       'P.train y regr deg 1','p.train x regr degr 2','P.train y regr deg 2')
     hold on;
 end 
