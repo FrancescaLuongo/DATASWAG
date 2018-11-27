@@ -61,7 +61,13 @@ immseTestY = immse(testY, testDataXOrder1*bY);
 
 %% LASSO
 
-%[bXLasso, statLasso] = lasso(trainData, trainX, 'CV', 10,...
- %   'Lambda', logspace(-10, 0, 15), 'UseParallel', true)
+%fitinto est structure qui contient les meansqerr etc
+[bXLasso, FitInfoLasso] = lasso(trainData, trainX, 'CV', 10,...
+  'Lambda', logspace(-10, 0, 15), 'UseParallel', true)
+%UseParallel — Set to true to compute in parallel. The default is false,
+%pour faire aller plus vite l algorithme 
+%lambda is the hyperparameter and its values are logspace(-10, 0, 15)
 
-%semilogx(lambda,FitInfo.MSE)
+
+%for the plot of the mean squared error
+semilogx(lambda,FitInfoLasso.MSE)  

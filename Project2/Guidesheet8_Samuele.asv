@@ -37,26 +37,29 @@ FM = trainData(:,1:960);
 %test Data in PC space, only using two features for speed
 testFM = testData(:,1:960);
 
-XOrder1 = [ I FM ];
-testDataXOrder1 = [ testI testFM ];
-
-%We make regressions for both coordinates
-bX = regress(trainX, XOrder1);
-bY = regress(trainY, XOrder1);
-immseTrainX = immse(trainX, XOrder1*bX);
-immseTrainY = immse(trainY, XOrder1*bY);
-% comme ça peut voir si la fct fait pareil
+%regression for both coordinates
 [BX1, perfX1] = TrainRegression(trainX, FM, 1);
 [BY1, perfY1] = TrainRegression(trainY, FM, 1);
-
-[performance] = TestRegressionPerformance(Data, FM,B, 1)
-immseTestX = immse(testX, testDataXOrder1*bX);
-immseTestY = immse(testY, testDataXOrder1*bY);
+%performance of the test with the trained regression
+[perfTestX1] = TestRegressionPerformance(testX, testFM,BX1, 1);
+[perfTestY1] = TestRegressionPerformance(testY, testFM,BY1, 1);
 
 
 %% LASSO
+%fitinto est structure qui contient les meansqerr etc
+[bXLasso, FitInfoLasso] = lasso(trainData, trainX, 'CV', 10,...
+  'Lambda', logspace(-10, 0, 15));
 
-[bXLasso, statLasso] = lasso(trainData, trainX, 'CV', 10,...
-    'Lambda', logspace(-10, 0, 15), 'UseParallel', true)
+lambd = FitInfoLasso.Lambda; %gives vector of lambda
+MSQE = FitInfoLasso.MSE; %gives vector of MSE corresponding to each lambda
+NonZeroCoeff = FitInfoLasso.DF; % gives vector, each column correspnds to the nb of non zero coeffs corresponding to a lambda
 
-semilogx(lambda,FitInfo.MSE)
+%for the plot of the mean squared error
+figure(1)
+semilogx(lambd,MSQE)
+hold on;
+figure(2)
+plot (lambd,MSQE)
+
+%use the beta (vecteur B) and intercept 
+

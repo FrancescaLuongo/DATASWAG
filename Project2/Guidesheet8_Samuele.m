@@ -48,14 +48,18 @@ testFM = testData(:,1:960);
 %% LASSO
 %fitinto est structure qui contient les meansqerr etc
 [bXLasso, FitInfoLasso] = lasso(trainData, trainX, 'CV', 10,...
-  'Lambda', logspace(-10, 0, 15), 'UseParallel', true)
-%UseParallel — Set to true to compute in parallel. The default is false
+  'Lambda', logspace(-10, 0, 15));
+
+lambd = FitInfoLasso.Lambda; %gives vector of lambda
+MSQE = FitInfoLasso.MSE; %gives vector of MSE corresponding to each lambda
+NonZeroCoeff = FitInfoLasso.DF; % gives vector, each column correspnds to the nb of non zero coeffs corresponding to a lambda
 
 %for the plot of the mean squared error
-semilogx(lambda,FitInfoLasso.MSE)  
+figure(1)
+semilogx(lambd,MSQE)
+hold on;
+figure(2)
+plot (lambd,MSQE)
 
-
-
-
-
-
+%use the beta (vecteur B) and intercept to regress test data POSx et POSy, plot the data and compute the test MSE 
+%test*B pour eliminer les coeffs avec poids 0 et fait une regression avec les intercept
