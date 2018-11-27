@@ -49,6 +49,8 @@ testFM = testData(:,1:960);
 %fitinto est structure qui contient les meansqerr etc
 [bXLasso, FitInfoLasso] = lasso(trainData, trainX, 'CV', 10,...
   'Lambda', logspace(-10, 0, 15));
+%bXlasso lignes est pour chaque lambda, cest les beta, intercept est le
+%beta0
 
 lambd = FitInfoLasso.Lambda; %gives vector of lambda
 MSQE = FitInfoLasso.MSE; %gives vector of MSE corresponding to each lambda
@@ -61,5 +63,17 @@ hold on;
 figure(2)
 plot (lambd,MSQE)
 
-%use the beta (vecteur B) and intercept 
+%use the beta (vecteur B) and intercept to regress test data POSx et POSy,
+%plot the data and compute the best MSE 
+
+%lambda corresponding to best MSE value (the minimal):
+
+BestLambda = FitInfoLasso.LambdaMinMSE;
+indexBestMSE = FitInfoLasso.IndexMinMSE; %c'est 10
+BestMSE = MSQE(1,indexBestMSE);
+BestIntercept = FitInfoLasso.Intercept(1,indexBestMSE);%le beta 0
+BestBeta = bXLasso(:,indexBestMSE) %toues les coeffs beta
+
+%regression
+BestIntercept + BestBeta * test ()
 
