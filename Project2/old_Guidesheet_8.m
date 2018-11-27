@@ -1,6 +1,6 @@
 clear all;
 close all;
-clc;
+clc;               
 %% Loading data
 
 Data = load('./Data/Data.mat');
@@ -37,25 +37,31 @@ FM = trainData(:,1:960);
 %test Data in PC space, only using two features for speed
 testFM = testData(:,1:960);
 
-%regression for both coordinates
+XOrder1 = [ I FM ];
+testDataXOrder1 = [ testI testFM ];
+
+%We make regressions for both coordinates
+bX = regress(trainX, XOrder1);                       %pour comparer si la fonction faite et le code normal 
+                                                        %donnent pareil et ouip c la meme chose
+bY = regress(trainY, XOrder1);
+immseTrainX = immse(trainX, XOrder1*bX);
+immseTrainY = immse(trainY, XOrder1*bY);
+% comme ça peut voir si la fct fait pareil
 [BX1, perfX1] = TrainRegression(trainX, FM, 1);
 [BY1, perfY1] = TrainRegression(trainY, FM, 1);
-%performance of the test with the trained regression
+
 [perfTestX1] = TestRegressionPerformance(testX, testFM,BX1, 1);
 [perfTestY1] = TestRegressionPerformance(testY, testFM,BY1, 1);
 
+immseTestX = immse(testX, testDataXOrder1*bX);
+immseTestY = immse(testY, testDataXOrder1*bY);
+
+[perfTestX] = TestRegressionPerformance(testX, testFM,bX, 1); % juste pour comparer et voir si obtient même resultat
+[perfTestY] = TestRegressionPerformance(testY, testFM,bY, 1);
 
 %% LASSO
-%fitinto est structure qui contient les meansqerr etc
-[bXLasso, FitInfoLasso] = lasso(trainData, trainX, 'CV', 10,...
-  'Lambda', logspace(-10, 0, 15), 'UseParallel', true)
-%UseParallel — Set to true to compute in parallel. The default is false
 
-%for the plot of the mean squared error
-semilogx(lambda,FitInfoLasso.MSE)  
+%[bXLasso, statLasso] = lasso(trainData, trainX, 'CV', 10,...
+ %   'Lambda', logspace(-10, 0, 15), 'UseParallel', true)
 
-
-
-
-
-
+%semilogx(lambda,FitInfo.MSE)
