@@ -71,9 +71,12 @@ plot (lambd,MSQE)
 BestLambda = FitInfoLasso.LambdaMinMSE;
 indexBestMSE = FitInfoLasso.IndexMinMSE; %c'est 10
 BestMSE = MSQE(1,indexBestMSE);
-BestIntercept = FitInfoLasso.Intercept(1,indexBestMSE);%le beta 0
+BestIntercept = FitInfoLasso.Intercept(1,indexBestMSE);%le beta0 (ordonée à l'origine)
 BestBeta = bXLasso(:,indexBestMSE); %toues les coeffs beta
 
 %regression
 POStestX = BestIntercept + testFM * BestBeta ;  %donne la regression pour chaque event
+perf = immse(testX, POStestX)
+
+% plot(POStestX)
 
