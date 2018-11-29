@@ -76,7 +76,9 @@ BestBeta = bXLasso(:,indexBestMSE); %toues les coeffs beta
 
 %regression
 POStestX = BestIntercept + testFM * BestBeta ;  %donne la regression pour chaque event
-perf = immse(testX, POStestX)
+%ou??? j sais pas trop
+POStestX = [BestIntercept  testFM * BestBeta]; 
+perf = immse(testX, POStestX);
 
 % plot(POStestX)
 
