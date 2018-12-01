@@ -22,6 +22,7 @@ testY = Data.PosY(mTrainData+1:mData,:);
 
 [mTestData, nTestData] = size(testData);
 
+
 %% Normalization
 
 [normalizedTrainData,mu,sigma] = zscore(trainData);
@@ -47,11 +48,11 @@ scatter3(projectedTrainingData(:,1),projectedTrainingData(:,2),projectedTraining
 I = ones(mTrainData,1);
 testI = ones(mTestData,1);
 %train Data in PC space, only using two features for speed
-FM = projectedTrainingData(:,1:2);
+FM = projectedTrainingData(:,1:100);
 %test Data in PC space, only using two features for speed
-testFM = projectedTestData(:,1:2);
+testFM = projectedTestData(:,1:100);
 
-%Ordre 1 Regressor
+%Order 1 Regressor
 XOrder1 = [ I FM ];
 testDataXOrder1 = [ testI testFM ];
 
@@ -80,6 +81,49 @@ immseTrainY = immse(trainY, XOrder2*bY);
 immseTestX = immse(testX, testDataXOrder2*bX);
 immseTestY = immse(testY, testDataXOrder2*bY); 
 
+%% Increasing iteratively order of regressor
+
+I = ones(mTrainData,1);
+testI = ones(mTestData,1);
+
+FM = projectedTrainingData(:,1:250);
+testFM = projectedTestData(:,1:250);
+
+nIterations = 15;
+immseIterationTrainX = zeros(1,nIterations);
+immseIterationTrainY = zeros(1,nIterations);
+immseIterationTestX = zeros(1,nIterations);
+immseIterationTestY = zeros(1,nIterations);
+
+X = [I];
+XTest = [testI];
+
+for order = 1:1:nIterations
+    X = [X FM.^order];
+    XTest = [XTest testFM.^order];
+    
+    bX = regress(trainX, X);
+    bY = regress(trainY, X);
+    
+    immseIterationTrainX(1,order) = immse(trainX, X*bX);
+    immseIterationTrainY(1,order) = immse(trainY, X*bY);
+
+    immseIterationTestX(1,order) = immse(testX, XTest*bX); 
+    immseIterationTestY(1,order) = immse(testY, XTest*bY);
+    
+end
+
+%% Plot result of regression
+range = 1:nIterations;
+plot(range,immseIterationTrainX,'rx', range,immseIterationTrainY,...
+    'gx', range,immseIterationTestX,'ro', range,immseIterationTestY,'go');
+
+axis([0 15 0 0.005]);
+
+legend('TrainX MSE','TrainY MSE','TestX MSE', 'TestY MSE');
+
+
+
 %% Regression with for loop integration of features (ordre 1)
 
 nstep = 50; %nb de features que veut prendre
@@ -88,7 +132,8 @@ extractedFeatures = [];
 % nbFeatures=100;
 for n = 1:nstep:nbFeatures
     %regression on the train set, ajoute une feature et fait la regression
-     % peut prendre features dans l'ordre ou mieux random?
+     % peut prendre features dans l'ordre ou mieux random? DOIT prendre en
+     % ordre!
     addedFeatures = projectedTrainingData(:,1:n);
     testaddedFeatures = projectedTestData(:,1:n);
     
