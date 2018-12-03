@@ -46,7 +46,7 @@ testFM = testData(:,1:960);
 
 figure(1)
 plot(perfTestX1,perfTestY1, 'g*')
-title('performance of regress(g), lasso(b) and elastic net (alpha 0.5)(r)')
+title('performance of test regress(g), lasso(b) and elastic net (alpha 0.5)(r)')
 hold on;
 %% LASSO
 %fitinto est structure qui contient les meansqerr etc
