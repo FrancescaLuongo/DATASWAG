@@ -44,8 +44,10 @@ bXgrid = [];
 bYgrid =[]; %size est 960 100
 FitInfoXgrid =[]; %taille 1 100 (car 10 lambda et 10 alpha (donc les 10 premiers du tableau cest pour le 1e lamdba etc))
 FitInfoYgrid =[];
-
-
+alpha =[0.1:0.1:nalpha];
+lambda = [1:1:nlambda];
+Yperf=[];
+Xperf=[];
 for nl=1:1:nlambda
     for na=0.1:0.1:nalpha
         [bX,FitInfoX] = lasso(trainData, trainX,'Alpha',na,'CV',10, ...
@@ -76,24 +78,24 @@ for n = 1:1:size(FitInfoXgrid')
         NonZeroCoeffelnetY = FitInfYg.DF; % gives vector, each column correspnds to the nb of non zero coeffs corresponding to a lambda
 
   %plot 1%  
-
-        %for the plot of the mean squared error
+% 
+%         %for the plot of the mean squared error
 %         figure(2)
 %         semilogx(lambdelastnetX,MSQelnetX,'rx-',lambdelastnetY,MSQelnetY,'bo-')
 %         title('semilog scale, lambda in function of the respective MSQ, lasso (b),elastic net (alpha 0.5)(r)elastic net (alpha de 0 à 1 )(x=r)(y=b)')
 %         hold on;
-        figure(3)
-        plot(lambdelastnetX,MSQelnetX,'rx-',lambdelastnetY,MSQelnetY,'bo-')
-        title('lambda in function of the respective MSQ, elastic net (alpha de 0 à 1 )(x=r)(y=b)')
-        hold on;
-        figure(4)
-        plot3(lambdelastnetX,NonZeroCoeffelnetX, 'rx-',lambdelastnetY,NonZeroCoeffelnetY, 'bo-') % faut un plot qui montre mieux les petits lambda
-        title('lambda in function of the number of non zero coeff,elastic net (alpha de 0 à 1 )(x=r)(y=b)')
-        hold on;
+%         figure(3)
+%         plot(lambdelastnetX,MSQelnetX,'rx-',lambdelastnetY,MSQelnetY,'bo-')
+%         title('lambda in function of the respective MSQ, elastic net (alpha de 0 à 1 )(x=r)(y=b)')
+%         hold on;
+%         figure(4)
+%         plot(lambdelastnetX,NonZeroCoeffelnetX, 'rx-',lambdelastnetY,NonZeroCoeffelnetY, 'bo-') % faut un plot qui montre mieux les petits lambda
+%         title('lambda in function of the number of non zero coeff,elastic net (alpha de 0 à 1 )(x=r)(y=b)')
+%         hold on;
 %         figure(5)
 %         semilogx(lambdelastnetX,NonZeroCoeffelnetX, 'rx-',lambdelastnetY,NonZeroCoeffelnetY, 'bo-') %see that increasing lambda decreases the number of non zero coeffs, donc plus de 0
 %         title('semilog scale, lambda in function of the number of non zero coeff,elastic net (alpha de 0 à 1 )(x=r)(y=b)')
-        hold on;
+%         hold on;
 %         lassoPlot(bXb,FitInfXg,'PlotType','CV');
 %         legend('show') % Show legend
 
@@ -127,11 +129,17 @@ for n = 1:1:size(FitInfoXgrid')
         %ou??? j sais pas trop
         %POStestX = [BestIntercept  testFM * BestBeta]; 
         perfelnetY = immse(testY, POStestelnetY);
+        
+Yperf=[Yperf perfelnetY];
+Xperf=[Xperf perfelnetX];
+        
+%plot 2 
 
- %plot 2
-
- figure(1)
-        plot(perfelnetX,perfelnetY, '*')
-        title('performance of test elastic net (alpha de 0 à 1)')
-        hold on;
+% 
+%  figure(1)
+%         plot(perfelnetX,perfelnetY, '*')
+%         title('performance of test elastic net (alpha de 0 à 1)')
+%         hold on;
 end
+plot3(Xperf,alpha, lambda)
+surface(Yperf,alpha, lambda)
