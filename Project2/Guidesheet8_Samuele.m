@@ -58,15 +58,17 @@ NonZeroCoeffX = FitInfoLassoX.DF; % gives vector, each column correspnds to the 
 
 %for the plot of the mean squared error
 figure(1)
-semilogx(lambdX,MSQX)
+semilogx(lambdX,MSQX,'bx-')
 hold on;
 figure(2)
-plot(lambdX,MSQX)
+plot(lambdX,MSQX,'bo-')
 hold on;
 figure(3)
-plot(lambdX,NonZeroCoeffX, 'o') % faut un plot qui montre mieux les petits lambda
+plot(lambdX,NonZeroCoeffX, 'bx-') % faut un plot qui montre mieux les petits lambda
+hold on;
 figure(4)
-semilogx(lambdX,NonZeroCoeffX, 'x') %see that increasing lambda decreases the number of non zero coeffs, donc plus de 0
+semilogx(lambdX,NonZeroCoeffX, 'bo-') %see that increasing lambda decreases the number of non zero coeffs, donc plus de 0
+hold on;
 lassoPlot(bXLasso,FitInfoLassoX,'PlotType','CV');
 legend('show') % Show legend
 
@@ -103,15 +105,17 @@ NonZeroCoeffelnetX = FitInfelnetX.DF; % gives vector, each column correspnds to 
 
 %for the plot of the mean squared error
 figure(1)
-semilogx(lambdelastnetX,MSQelnetX)
+semilogx(lambdelastnetX,MSQelnetX,'ro-')
 hold on;
 figure(2)
-plot(lambdelastnetX,MSQelnetX)
+plot(lambdelastnetX,MSQelnetX,'rx-')
 hold on;
 figure(3)
-plot(lambdelastnetX,NonZeroCoeffelnetX, 'o') % faut un plot qui montre mieux les petits lambda
+plot(lambdelastnetX,NonZeroCoeffelnetX, 'ro-') % faut un plot qui montre mieux les petits lambda
+hold on;
 figure(4)
-semilogx(lambdelastnetX,NonZeroCoeffelnetX, 'x') %see that increasing lambda decreases the number of non zero coeffs, donc plus de 0
+semilogx(lambdelastnetX,NonZeroCoeffelnetX, 'rx-') %see that increasing lambda decreases the number of non zero coeffs, donc plus de 0
+hold on;
 lassoPlot(bXelnet,FitInfelnetX,'PlotType','CV');
 legend('show') % Show legend
 
