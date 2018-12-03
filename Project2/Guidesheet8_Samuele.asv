@@ -130,4 +130,4 @@ BestBetaelnetX = bXelnet(:,indexBestMSQelnetX); %toues les coeffs beta
 POStestelnetX = BestInterceptelnetX + testFM * BestBetaelnetX ;  %donne la regression pour chaque event
 %ou??? j sais pas trop
 %POStestX = [BestIntercept  testFM * BestBeta]; 
-perfelnetX = immse(testX, POStestelnetX);
+perfX = immse(testX, POStestelnetX);
