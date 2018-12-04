@@ -41,7 +41,7 @@ testFM = testData(:,1:960);
 nlambda = 10 ;
 nalpha= 1 ;
 bXgrid = [];
-bYgrid =[]; %size est 960 100
+bYgrid =[]; %size est 960 100, contient tous les by(colonnes) opur chaque alpha et lambda (combinaison)
 FitInfoXgrid =[]; %taille 1 100 (car 10 lambda et 10 alpha (donc les 10 premiers du tableau cest pour le 1e lamdba etc))
 FitInfoYgrid =[];
 alpha =[0.1:0.1:nalpha];
@@ -63,15 +63,15 @@ nl=1:1:nlambda;
         FitInfoYgrid =[FitInfoYgrid FitInfoY];
     end
 % end 
-[m,n1]=size(FitInfoXgrid)
-for n = 1:1:n1
-        FitInfXg = FitInfoXgrid(1,n);
-        FitInfYg = FitInfoYgrid(1,n);
-        bXb = bXgrid(:,n);
-        bYb= bYgrid(:,n);
-        
+[m,n1]=size(FitInfoXgrid) %chaque fitinfogrid contient 10 fitinfo qui a 10 lambda differents
+for m = 1:1:n1
+        FitInfXg = FitInfoXgrid(1,m);
+        FitInfYg = FitInfoYgrid(1,m);
+        bXb = bXgrid(:,:);
+        bYb= bYgrid(:,:); %960,100 taille
+        for n = 0.1:0.1:nalpha
         lambdelastnetX = FitInfXg.Lambda; %gives vector of lambda
-        MSQelnetX = FitInfXg.MSE; %gives vector of MSE corresponding to each lambda
+        MSQelnetX = FitInfXg.MSE; %gives matrix of MSE corresponding to each lambda
         NonZeroCoeffelnetX = FitInfXg.DF; % gives vector, each column correspnds to the nb of non zero coeffs corresponding to a lambda
 
         lambdelastnetY = FitInfYg.Lambda; %gives vector of lambda
@@ -81,25 +81,25 @@ for n = 1:1:n1
   %plot 1%  
 % 
 %         %for the plot of the mean squared error
-%         figure(2)
-%         semilogx(lambdelastnetX,MSQelnetX,'rx-',lambdelastnetY,MSQelnetY,'bo-')
-%         title('semilog scale, lambda in function of the respective MSQ, lasso (b),elastic net (alpha 0.5)(r)elastic net (alpha de 0 à 1 )(x=r)(y=b)')
-%         hold on;
-%         figure(3)
-%         plot(lambdelastnetX,MSQelnetX,'rx-',lambdelastnetY,MSQelnetY,'bo-')
-%         title('lambda in function of the respective MSQ, elastic net (alpha de 0 à 1 )(x=r)(y=b)')
-%         hold on;
-%         figure(4)
-%         plot(lambdelastnetX,NonZeroCoeffelnetX, 'rx-',lambdelastnetY,NonZeroCoeffelnetY, 'bo-') % faut un plot qui montre mieux les petits lambda
-%         title('lambda in function of the number of non zero coeff,elastic net (alpha de 0 à 1 )(x=r)(y=b)')
-%         hold on;
-%         figure(5)
-%         semilogx(lambdelastnetX,NonZeroCoeffelnetX, 'rx-',lambdelastnetY,NonZeroCoeffelnetY, 'bo-') %see that increasing lambda decreases the number of non zero coeffs, donc plus de 0
-%         title('semilog scale, lambda in function of the number of non zero coeff,elastic net (alpha de 0 à 1 )(x=r)(y=b)')
-%         hold on;
+        figure(2)
+        semilogx(lambdelastnetX,MSQelnetX,'rx-',lambdelastnetY,MSQelnetY,'bo-')
+        title('semilog scale, lambda in function of the respective MSQ, lasso (b),elastic net (alpha 0.5)(r)elastic net (alpha de 0 à 1 )(x=r)(y=b)')
+        hold on;
+        figure(3)
+        plot(lambdelastnetX,MSQelnetX,'rx-',lambdelastnetY,MSQelnetY,'bo-')
+        title('lambda in function of the respective MSQ, elastic net (alpha de 0 à 1 )(x=r)(y=b)')
+        hold on;
+        figure(4)
+        plot(lambdelastnetX,NonZeroCoeffelnetX, 'rx-',lambdelastnetY,NonZeroCoeffelnetY, 'bo-') % faut un plot qui montre mieux les petits lambda
+        title('lambda in function of the number of non zero coeff,elastic net (alpha de 0 à 1 )(x=r)(y=b)')
+        hold on;
+        figure(5)
+        semilogx(lambdelastnetX,NonZeroCoeffelnetX, 'rx-',lambdelastnetY,NonZeroCoeffelnetY, 'bo-') %see that increasing lambda decreases the number of non zero coeffs, donc plus de 0
+        title('semilog scale, lambda in function of the number of non zero coeff,elastic net (alpha de 0 à 1 )(x=r)(y=b)')
+        hold on;
 %         lassoPlot(bXb,FitInfXg,'PlotType','CV');
 %         legend('show') % Show legend
-
+% 
 %         lassoPlot(bYb,FitInfYg,'PlotType','CV');
 %         legend('show') % Show legend
 
@@ -137,10 +137,11 @@ Xperf=[Xperf perfelnetX];
 %plot 2 
 
 % 
-%  figure(1)
-%         plot(perfelnetX,perfelnetY, '*')
-%         title('performance of test elastic net (alpha de 0 à 1)')
-%         hold on;
+ figure(1)
+        plot(perfelnetX,perfelnetY, '*')
+        title('performance of test elastic net (alpha de 0 à 1)')
+        hold on;
+        end
 end
 surface(Xperf,alpha, lambda) % on a un x perf pour chaque combinaison de alpha et lambda
 surface(Yperf,alpha, lambda)%pas afficher en 3d mais en 2d dixit assistants
