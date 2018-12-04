@@ -190,7 +190,7 @@ for n = 1:nstep:nbFeatures
      % ordre!
     FM = projectedTrainingData(:,1:n);
     testFM = projectedTestData(:,1:n);
-    
+    2   
     for order = 1:1:nIterations
         X = [X FM.^order];
         XTest = [XTest testFM.^order];
@@ -209,3 +209,44 @@ for n = 1:nstep:nbFeatures
 
     
 end
+
+%% 3D PLOTTING RESULTS
+
+coordinateOrder = 1:1:6;
+coordinateFeatures = 1:50:500;
+
+figure(1);
+surf(coordinateOrder, coordinateFeatures, immseIterationTestX(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosX');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');
+
+figure(2);
+surf(coordinateOrder, coordinateFeatures, immseIterationTestY(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosY');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');
+
+figure(3);
+surf(coordinateOrder, coordinateFeatures, immseIterationTrainX(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosY');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');
+
+figure(4);
+surf(coordinateOrder, coordinateFeatures, immseIterationTrainY(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosY');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');
