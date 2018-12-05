@@ -10,15 +10,19 @@ addpath('functions');
 [mData, nData] = size(Data.Data);
 
 
-trainData = Data.Data(1:round(mData*0.7),:);
-trainX = Data.PosX(1:round(mData*0.7),:);
-trainY = Data.PosY(1:round(mData*0.7),:);
+trainData = Data.Data(1:round(mData*0.4),:);
+trainX = Data.PosX(1:round(mData*0.4),:);
+trainY = Data.PosY(1:round(mData*0.4),:);
 
 [mTrainData, nTrainData] = size(trainData);
 
-testData  = Data.Data(mTrainData+1:mData,:);
-testX = Data.PosX(mTrainData+1:mData,:);
-testY = Data.PosY(mTrainData+1:mData,:);
+testData = Data.Data(mTrainData+1:round(mData*0.7),:);
+testX = Data.PosX(mTrainData+1:round(mData*0.7),:);
+testY = Data.PosY(mTrainData+1:round(mData*0.7),:);
+
+valData = Data.Data(round(mData*0.7)+1:mData,:);
+valX = Data.PosX(round(mData*0.7)+1:mData,:);
+valY = Data.PosY(round(mData*0.7)+1:mData,:);
 
 [mTestData, nTestData] = size(testData);
 
@@ -160,3 +164,89 @@ for n = 1:nstep:nbFeatures
        'P.train y regr deg 1','p.train x regr degr 2','P.train y regr deg 2')
     hold on;
 end 
+
+%% Final regressor
+
+nstep = 50; %nb de features que veut prendre
+[exp,nbFeatures] = size(projectedTrainingData(1,:));%nb de features dans la PCA
+
+
+I = ones(mTrainData,1);
+testI = ones(mTestData,1);
+
+nIterations = 6;
+immseIterationTrainX = zeros(19,nIterations);
+immseIterationTrainY = zeros(19,nIterations);
+immseIterationTestX = zeros(19,nIterations);
+immseIterationTestY = zeros(19,nIterations);
+
+X = [I];
+XTest = [testI];
+step = 1;
+
+for n = 1:nstep:nbFeatures
+    %regression on the train set, ajoute une feature et fait la regression
+     % peut prendre features dans l'ordre ou mieux random? DOIT prendre en
+     % ordre!
+    FM = projectedTrainingData(:,1:n);
+    testFM = projectedTestData(:,1:n);
+    2   
+    for order = 1:1:nIterations
+        X = [X FM.^order];
+        XTest = [XTest testFM.^order];
+        
+        bX = regress(trainX, X);
+        bY = regress(trainY, X);
+
+        immseIterationTrainX(step,order) = immse(trainX, X*bX);
+        immseIterationTrainY(step,order) = immse(trainY, X*bY);
+
+        immseIterationTestX(step,order) = immse(testX, XTest*bX); 
+        immseIterationTestY(step,order) = immse(testY, XTest*bY);
+    end
+    
+    step = step+1;
+
+    
+end
+
+%% 3D PLOTTING RESULTS
+
+coordinateOrder = 1:1:6;
+coordinateFeatures = 1:50:500;
+
+figure(1);
+surf(coordinateOrder, coordinateFeatures, immseIterationTestX(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosX');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');
+
+figure(2);
+surf(coordinateOrder, coordinateFeatures, immseIterationTestY(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosY');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');
+
+figure(3);
+surf(coordinateOrder, coordinateFeatures, immseIterationTrainX(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosY');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');
+
+figure(4);
+surf(coordinateOrder, coordinateFeatures, immseIterationTrainY(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosY');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');
