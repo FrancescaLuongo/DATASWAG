@@ -8,9 +8,9 @@ Data = load('./Data/Data.mat');
 [mData, nData] = size(Data.Data);
 
 
-trainData = Data.Data(1:round(mData*0.05),:);
-trainX = Data.PosX(1:round(mData*0.05),:);
-trainY = Data.PosY(1:round(mData*0.05),:);
+trainData = Data.Data(1:round(mData*0.7),:);
+trainX = Data.PosX(1:round(mData*0.7),:);
+trainY = Data.PosY(1:round(mData*0.7),:);
 
 [mTrainData, nTrainData] = size(trainData);
 
@@ -63,7 +63,7 @@ nl=1:1:nlambda;
         FitInfoYgrid =[FitInfoYgrid FitInfoY];
     end
 % end 
-[m,n1]=size(FitInfoXgrid) %chaque fitinfogrid contient 10 fitinfo qui a 10 lambda differents
+[l,n1]=size(FitInfoXgrid) %chaque fitinfogrid contient 10 fitinfo qui a 10 lambda differents
 for m = 1:1:n1
         FitInfXg = FitInfoXgrid(1,m);
         FitInfYg = FitInfoYgrid(1,m);
@@ -102,6 +102,7 @@ for m = 1:1:n1
 % 
 %         lassoPlot(bYb,FitInfYg,'PlotType','CV');
 %         legend('show') % Show legend
+
 
         %use the beta (vecteur B) and intercept to regress test data POSx et POSy,
         %plot the data and compute the best MSE 
