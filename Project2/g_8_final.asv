@@ -38,7 +38,7 @@ FM = trainData(:,1:960);
 testFM = testData(:,1:960);
 
 %% optimization of hyperparameters alpha et lambda
-nlambda = 1 ;
+nlambda = 10 ;
 nalpha= 1 ;
 bXgrid = [];
 bYgrid =[]; %size est 960 100, contient tous les by(colonnes) opur chaque alpha et lambda (combinaison)
@@ -48,7 +48,7 @@ alpha =[0.1:0.1:nalpha];
 lambda = [1:1:nlambda];
 Yperf=[];
 Xperf=[];
-nl=0.01:0.01:nlambda;
+nl=1:1:nlambda;
 % for nl=1:1:nlambda
     for na=0.1:0.1:nalpha
         [bX,FitInfoX] = lasso(trainData, trainX,'Alpha',na,'CV',10, ...

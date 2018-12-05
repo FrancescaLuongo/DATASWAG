@@ -4,7 +4,7 @@ clc;
 %% Loading data
 
 Data = load('./Data/Data.mat');
-
+addpath('functions');
 [mData, nData] = size(Data.Data);
 
 
