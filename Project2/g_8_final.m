@@ -150,7 +150,7 @@ for n=1:1:length(Yperf)
         title('performance of test elastic net (alpha de 0 à 1)')
         hold on;
 end
-
+%%
 surface(Xperf,alpha, lambda) % on a un x perf pour chaque combinaison de alpha et lambda
 surface(Yperf,alpha, lambda)%pas afficher en 3d mais en 2d dixit assistants
 view(3)

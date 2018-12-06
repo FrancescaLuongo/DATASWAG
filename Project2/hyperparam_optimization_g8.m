@@ -8,9 +8,9 @@ Data = load('./Data/Data.mat');
 [mData, nData] = size(Data.Data);
 
 
-trainData = Data.Data(1:round(mData*0.05),:);
-trainX = Data.PosX(1:round(mData*0.05),:);
-trainY = Data.PosY(1:round(mData*0.05),:);
+trainData = Data.Data(1:round(mData*0.7),:);
+trainX = Data.PosX(1:round(mData*0.7),:);
+trainY = Data.PosY(1:round(mData*0.7),:);
 
 [mTrainData, nTrainData] = size(trainData);
 
