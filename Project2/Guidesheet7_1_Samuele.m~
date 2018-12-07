@@ -38,39 +38,14 @@ end
 
 %% PCA
 
-[pcaCoeff, score, variance,~,explained] = pca(normalizedTrainData,'Centered','off');
+pcaCoeff = pca(normalizedTrainData,'Centered','off');
 
 %We put our train data on PC space
 projectedTrainingData = normalizedTrainData*pcaCoeff;
 
 %We put our test Data on PC space using PCs found on train data
 projectedTestData = testData*pcaCoeff;
-%to show the percet of variance
-cov_projected = cov(score);
-cov_original = cov(normalizedTrainData);
 
-
-% TODO: labels
-figure(99)
-imshow(cov_projected);
-hold on;
-
-% TODO: labels
-figure(98)
-imshow(cov_original);
-hold on;
-
-[t_max_cov_orig,t_ind_max_cov_orig] = max(cov_original.*(1-eye(size(cov_original))));
-[max_cov_orig,ind_max_cov_orig] = max(t_max_cov_orig);
-
-rel_cum_variance = cumsum(variance)/sum(variance);
-figure(97)
-plot(rel_cum_variance)
-grid on
-xlabel('Number of principal components')
-ylabel('Relative cumulative variance')
-hold on;
-figure(96)
 scatter3(projectedTrainingData(:,1),projectedTrainingData(:,2),projectedTrainingData(:,3));
 
 %% Regression
@@ -218,3 +193,67 @@ for n = 1:nstep:nbFeatures
     FM = projectedTrainingData(:,1:n);
     testFM = projectedTestData(:,1:n);
     
+    X=[I];
+    XTest=[testI];
+    iterationIndex = 1;
+    for order = 1:1:nIterations
+        iterationIndex
+        X = [X FM.^order];
+        XTest = [XTest testFM.^order];
+        
+        bX = regress(trainX, X);
+        bY = regress(trainY, X);
+
+        immseIterationTrainX(step,order) = immse(trainX, X*bX);
+        immseIterationTrainY(step,order) = immse(trainY, X*bY);
+
+        immseIterationTestX(step,order) = immse(testX, XTest*bX); 
+        immseIterationTestY(step,order) = immse(testY, XTest*bY);
+        iterationIndex = iterationIndex + 1;
+    end
+    
+    step = step+1;
+
+    
+end
+
+%% 3D PLOTTING RESULTS
+
+coordinateOrder = 1:1:6;
+coordinateFeatures = 1:50:500;
+
+figure(1);
+surf(coordinateOrder, coordinateFeatures, immseIterationTestX(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosX');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');
+
+figure(2);
+surf(coordinateOrder, coordinateFeatures, immseIterationTestY(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosY');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');
+
+figure(3);
+surf(coordinateOrder, coordinateFeatures, immseIterationTrainX(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosY');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');
+
+figure(4);
+surf(coordinateOrder, coordinateFeatures, immseIterationTrainY(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosY');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');

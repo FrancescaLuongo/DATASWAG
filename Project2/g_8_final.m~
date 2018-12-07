@@ -38,8 +38,8 @@ FM = trainData(:,1:960);
 testFM = testData(:,1:960);
 
 %% optimization of hyperparameters alpha et lambda
-nlambda = 0.12 ;
-nalpha= 1 ;
+nlambda = 0.05 ;
+nalpha= 0.4 ;
 bXgrid = [];
 bYgrid =[]; %size est 960 100, contient tous les by(colonnes) opur chaque alpha et lambda (combinaison)
 FitInfoXgrid =[]; %taille 1 100 (car 10 lambda et 10 alpha (donc les 10 premiers du tableau cest pour le 1e lamdba etc))
@@ -157,13 +157,13 @@ view(3)
 
 %% Surface Plot of MSE
 
-MSEMatrixX = zeros(nalpha/0.05,nlambda/0.005);
-MSEMatrixY = zeros(nalpha/0.05,nlambda/0.005);
+MSEMatrixX = zeros(nalpha/0.1,nlambda/0.01);
+MSEMatrixY = zeros(nalpha/0.1,nlambda/0.01);
 alphaAxis = 0.05:0.05:nalpha;
-lambdaAxis = 0.005:0.005:nlambda;
+lambdaAxis = 0.005:0.005:n;
 
 
-for i=1:1:nalpha/0.05
+for i=1:1:nalpha/0.1
     MSEMatrixX(i,:)=FitInfoXgrid(i).MSE;
     MSEMatrixY(i,:)=FitInfoYgrid(i).MSE;
 end
@@ -173,8 +173,8 @@ surf( lambdaAxis,alphaAxis, MSEMatrixX, ...
     'FaceAlpha',0.7);
 colorbar
 title ('MSE of Cross-Validation for PosX');
-ylabel ('alpha value');
-xlabel('lambda value');
+xlabel ('alpha value');
+ylabel('lambda value');
 zlabel('MSE');
 
 figure(2);
@@ -182,6 +182,6 @@ surf( lambdaAxis,alphaAxis, MSEMatrixY, ...
     'FaceAlpha',0.7);
 colorbar
 title ('MSE of Cross-Validation for PosY');
-ylabel ('alpha value');
-xlabel('lambda value');
+xlabel ('alpha value');
+ylabel('lambda value');
 zlabel('MSE');
