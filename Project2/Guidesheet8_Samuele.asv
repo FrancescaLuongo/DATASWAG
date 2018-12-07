@@ -24,23 +24,19 @@ testX = Data.PosX(mTrainData+1:mData,:);
 testY = Data.PosY(mTrainData+1:mData,:);
 
 testData05  = Data.Data(mTrainData05+1:mData,:);
-testX05 = Data.PosX(mTrainData+1:mData,:);
-testY05 = Data.PosY(mTrainData+1:mData,:);
+testX = Data.PosX(mTrainData+1:mData,:);
+testY = Data.PosY(mTrainData+1:mData,:);
 
 
 [mTestData, nTestData] = size(testData);
-[mTestData05, nTestData05] = size(testData05);
+
 %% Normalization
 
 [normalizedTrainData,mu,sigma] = zscore(trainData);
-[normalizedTrainData05,mu05,sigma05] = zscore(trainData05);
+
 %We normalize test data with same parameters found for trainData
 for index = 1:mTestData
     testData(index,:) = (testData(index,:)-mu)./sigma;
-end
-
-for index05 = 1:mTestData05
-    testData05(index05,:) = (testData05(index05,:)-mu05)./sigma05;
 end
 
 %% Regression
@@ -50,14 +46,6 @@ testI = ones(mTestData,1);
 FM = trainData(:,1:960);
 %test Data in PC space, only using two features for speed
 testFM = testData(:,1:960);
-
-I05 = ones(mTrainData05,1);
-testI05 = ones(mTestData05,1);
-%train Data in PC space, only using two features for speed
-FM05 = trainData05(:,1:960);
-%test Data in PC space, only using two features for speed
-testFM05 = testData05(:,1:960);
-
 
 % %regression for both coordinates
 % [BX1, perfX1] = TrainRegression(trainX, FM, 1);
@@ -91,7 +79,7 @@ lambdX = FitInfoLassoX.Lambda; %gives vector of lambda
 MSQX = FitInfoLassoX.MSE; %gives vector of MSE corresponding to each lambda
 NonZeroCoeffX = FitInfoLassoX.DF; % gives vector, each column correspnds to the nb of non zero coeffs corresponding to a lambda
 
-lambdY05= FitInfoLassoY05.Lambda;
+lambdy05= FitInfoLassoY05.Lambda;
 MSQY05= FitInfoLassoY05.MSE;
 NonZeroCoeffY05 =FitInfoLassoY05.DF;
 
@@ -129,75 +117,29 @@ perflassoY = immse(testY, POStestY);
 figure(1)
 plot(perflassoX,perflassoY ,'b*')
 hold on;
-%%
-%for the plot of the mean squared error
-figure(2)
-semilogx(lambdX05,MSQX05,'gx-',lambdY05,MSQY05,'go-')
-hold on;
-semilogx(lambdX,MSQX,'bx-',lambdY,MSQY,'bo-')
-
-title('semilog scale, lambda in function of the respective MSQ, lasso (b),elastic net (alpha 0.5)(r)')
-hold on;
-figure(3)
-plot(lambdX,MSQX,'bx-',lambdY,MSQY,'bo-')
-title('lambda in function of the respective MSQ, lasso (b),elastic net (alpha 0.5)(r)')
-hold on;
-figure(4)
-plot(lambdX,NonZeroCoeffX, 'bx-',lambdY,NonZeroCoeffY, 'bo-') % faut un plot qui montre mieux les petits lambda
-title('lambda in function of the number of non zero coeff, lasso (b),elastic net (alpha 0.5)(r)')
-hold on;
-figure(5)
-semilogx(lambdX,NonZeroCoeffX, 'bx-',lambdY,NonZeroCoeffY, 'bo-') %see that increasing lambda decreases the number of non zero coeffs, donc plus de 0
-hold on;
-semilogx(lambdX05,NonZeroCoeffX05, 'gx-',lambdY05,NonZeroCoeffY05, 'go-')
-title('semilog scale, lambda in function of the number of non zero coeff, lasso (b),elastic net (alpha 0.5)(r)')
-
-lassoPlot(bXLasso,FitInfoLassoX,'PlotType','CV');
-legend('show') % Show legend
-
-lassoPlot(bYLasso,FitInfoLassoY,'PlotType','CV');
-legend('show') % Show legend
-%use the beta (vecteur B) and intercept to regress test data POSx et POSy,
-%plot the data and compute the best MSE 
-
 %% Elastic net
 %it's adding a weight to the two constraints, this weight is alpha, it's an hyperparameter
 %when alpha =1, the elastic net corresponds to lasso
 
 [bXelnet,FitInfelnetX] = lasso(trainData, trainX,'Alpha',0.5,'CV',10, ...
     'Lambda', logspace(-10, 0, 15));
-[bXelnet05,FitInfelnetX05] = lasso(trainData05, trainX05,'Alpha',0.5,'CV',10, ...
-    'Lambda', logspace(-10, 0, 15));
 
 [bYelnet,FitInfelnetY] = lasso(trainData, trainY,'Alpha',0.5,'CV',10, ...
-    'Lambda', logspace(-10, 0, 15));
-[bYelnet05,FitInfelnetY05] = lasso(trainData05, trainY05,'Alpha',0.5,'CV',10, ...
     'Lambda', logspace(-10, 0, 15));
 
 lambdelastnetX = FitInfelnetX.Lambda; %gives vector of lambda
 MSQelnetX = FitInfelnetX.MSE; %gives vector of MSE corresponding to each lambda
 NonZeroCoeffelnetX = FitInfelnetX.DF; % gives vector, each column correspnds to the nb of non zero coeffs corresponding to a lambda
 
-lambdelastnetX05 = FitInfelnetX05.Lambda; %gives vector of lambda
-MSQelnetX05 = FitInfelnetX05.MSE; %gives vector of MSE corresponding to each lambda
-NonZeroCoeffelnetX05 = FitInfelnetX05.DF; % gives vector, each column correspnds to the nb of non zero coeffs corresponding to a lambda
-
-
 lambdelastnetY = FitInfelnetY.Lambda; %gives vector of lambda
 MSQelnetY = FitInfelnetY.MSE; %gives vector of MSE corresponding to each lambda
 NonZeroCoeffelnetY = FitInfelnetY.DF; % gives vector, each column correspnds to the nb of non zero coeffs corresponding to a lambda
 
-
-lambdelastnetY05 = FitInfelnetY05.Lambda; %gives vector of lambda
-MSQelnetY05 = FitInfelnetY05.MSE; %gives vector of MSE corresponding to each lambda
-NonZeroCoeffelnetY05 = FitInfelnetY05.DF; % gi
-
 %for the plot of the mean squared error
 figure(2)
-semilogx(lambdelastnetX,MSQelnetX,'cx-',lambdelastnetY,MSQelnetY,'co-')
+semilogx(lambdelastnetX,MSQelnetX,'rx-',lambdelastnetY,MSQelnetY,'ro-')
 
 hold on;
-semilogx(lambdelastnetX05,MSQelnetX05,'rx-',lambdelastnetY05,MSQelnetY05,'ro-')
 figure(3)
 plot(lambdelastnetX,MSQelnetX,'rx-',lambdelastnetY,MSQelnetY,'ro-')
 hold on;
@@ -205,9 +147,8 @@ figure(4)
 plot(lambdelastnetX,NonZeroCoeffelnetX, 'rx-',lambdelastnetY,NonZeroCoeffelnetY, 'ro-') % faut un plot qui montre mieux les petits lambda
 hold on;
 figure(5)
-semilogx(lambdelastnetX,NonZeroCoeffelnetX, 'cx-',lambdelastnetY,NonZeroCoeffelnetY, 'co-') %see that increasing lambda decreases the number of non zero coeffs, donc plus de 0
+semilogx(lambdelastnetX,NonZeroCoeffelnetX, 'rx-',lambdelastnetY,NonZeroCoeffelnetY, 'ro-') %see that increasing lambda decreases the number of non zero coeffs, donc plus de 0
 hold on;
-semilogx(lambdelastnetX05,NonZeroCoeffelnetX05, 'rx-',lambdelastnetY05,NonZeroCoeffelnetY05, 'ro-')
 lassoPlot(bXelnet,FitInfelnetX,'PlotType','CV');
 legend('show') % Show legend
 
@@ -246,3 +187,31 @@ figure(1)
 plot(perfelnetX,perfelnetY, 'r*')
 hold on;
 
+%%
+%for the plot of the mean squared error
+figure(2)
+semilogx(lambdX05,MSQX05,'gx-',lambdY05,MSQY05,'go-')
+semilogx(lambdX,MSQX,'bx-',lambdY,MSQY,'bo-')
+
+title('semilog scale, lambda in function of the respective MSQ, lasso (b),elastic net (alpha 0.5)(r)')
+hold on;
+figure(3)
+plot(lambdX,MSQX,'bx-',lambdY,MSQY,'bo-')
+title('lambda in function of the respective MSQ, lasso (b),elastic net (alpha 0.5)(r)')
+hold on;
+figure(4)
+plot(lambdX,NonZeroCoeffX, 'bx-',lambdY,NonZeroCoeffY, 'bo-') % faut un plot qui montre mieux les petits lambda
+title('lambda in function of the number of non zero coeff, lasso (b),elastic net (alpha 0.5)(r)')
+hold on;
+figure(5)
+semilogx(lambdX,NonZeroCoeffX, 'bx-',lambdY,NonZeroCoeffY, 'bo-') %see that increasing lambda decreases the number of non zero coeffs, donc plus de 0
+semilogx(lambdX05,NonZeroCoeffX05, 'gx-',lambdY05,NonZeroCoeffY05, 'go-')
+title('semilog scale, lambda in function of the number of non zero coeff, lasso (b),elastic net (alpha 0.5)(r)')
+hold on;
+lassoPlot(bXLasso,FitInfoLassoX,'PlotType','CV');
+legend('show') % Show legend
+
+lassoPlot(bYLasso,FitInfoLassoY,'PlotType','CV');
+legend('show') % Show legend
+%use the beta (vecteur B) and intercept to regress test data POSx et POSy,
+%plot the data and compute the best MSE 
