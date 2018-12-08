@@ -7,7 +7,7 @@ Data = load('./Data/Data.mat');
 
 [mData, nData] = size(Data.Data);
 
-
+AllData = Data.Data;
 trainData = Data.Data(1:round(mData*0.7),:);
 trainX = Data.PosX(1:round(mData*0.7),:);
 trainY = Data.PosY(1:round(mData*0.7),:);
@@ -29,6 +29,10 @@ for index = 1:mTestData
     testData(index,:) = (testData(index,:)-mu)./sigma;
 end
 
+for index = 1:mTestData
+    AllData(index,:) = (AllData(index,:)-mu)./sigma;
+end
+
 %% PCA
 
 pcaCoeff = pca(normalizedTrainData,'Centered','off');
@@ -38,6 +42,8 @@ projectedTrainingData = normalizedTrainData*pcaCoeff;
 
 %We put our test Data on PC space using PCs found on train data
 projectedTestData = testData*pcaCoeff;
+
+projectedAllData = AllData*pcaCoeff;
 %%
 I = ones(mTrainData,1);
 testI = ones(mTestData,1);
@@ -49,6 +55,8 @@ testFM = projectedTestData(:,1:500);
 FMY = projectedTrainingData(:,1:100);
 %test Data in PC space, only using two features for speed
 testFMY = projectedTestData(:,1:100);
+
+AllFMX = projectedAllData
 %% Training final models
 %We do 100 features order 2 and 3 regression and alpha=0.05, lambda=0.005
 
@@ -118,8 +126,9 @@ predictedPosY = zeros(1, mTestData);
 for i=1:1:mTestData
     predictedPosX(1,i)= bX2(1) + dot(bX2(2:501),testData(i,1:500)) + ...
         dot(bX2(502:1001),(testData(i,1:500).^2));
-    predictedPosY(1,i)= bY2(1) + dot(bY2(2:501),testData(i,1:500)) + ...
-        dot(bY2(502:1001),(testData(i,1:500).^2));
+    %CONTROLLARE QUESTO MI DA UN ERRORE GRANDE NEL GRAFICO
+    predictedPosY(1,i)= bY2(1) + dot(bY2(2:101),testData(i,1:100)) + ...
+        dot(bY2(102:201),(testData(i,1:100).^2));
 end
 
 
@@ -141,4 +150,5 @@ hold off;
 
 
 %% TRAIN ON EVERYTHING
+
 
