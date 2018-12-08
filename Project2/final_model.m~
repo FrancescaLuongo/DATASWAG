@@ -86,37 +86,40 @@ immseLassoY = immse(testY, (testData*bYLasso)+FitInfoY.Intercept);
 
 figure(1); %PosX MSE
 range = 1:1:3;
-MSEs = [FitInfoX.MSE immseTestX2 immseTestX3 ];
+MSEs = [immseTestX2 immseTestX3 immseLassoX];
 
 x = 1:3;
 b = num2str(MSEs'); c = cellstr(b);
 dx = 0.1; dy = 0.0001; % displacement so the text does not overlay the data points
 
 scatter(range, MSEs, 40, 'filled', 'r');
-axis([0 4 0 0.001])
+axis([0 4 0 0.0025])
 text(x+dx, MSEs+dy, c);
 
 figure(2); %PosY MSE
 range = 1:1:3;
-MSEs = [FitInfoY.MSE immseTestY2 immseTestY3 ];
+MSEs = [immseTestY2 immseTestY3 immseLassoY];
 
 x = 1:3;
 b = num2str(MSEs'); c = cellstr(b);
 dx = 0.1; dy = 0.0001; % displacement so the text does not overlay the data points
 
 scatter(range, MSEs, 40, 'filled', 'r');
-axis([0 4 0 0.001])
+axis([0 4 0 0.0025])
 text(x+dx, MSEs+dy, c);
 
-%% Plotting PosX and PosY for Lasso
+%% Plotting PosX and PosY for order2
 index = 1:1:mTestData;
 predictedPosX = zeros(1, mTestData);
 predictedPosY = zeros(1, mTestData);
 
-
+%QUESTA COSA HA SENSO PER VOI? A ME SEMBRA DI AVERLA FATTA GIUSTA MA VORREI
+%CONFERMA
 for i=1:1:mTestData
-    predictedPosX(1,i)=FitInfoX.Intercept + dot(bXLasso,testData(i,:));
-    predictedPosY(1,i)=FitInfoY.Intercept + dot(bYLasso,testData(i,:));
+    predictedPosX(1,i)= bX2(1) + dot(bX2(2:501),testData(i,1:500)) + ...
+        dot(bX2(502:1001),(testData(i,1:500).^2));
+    predictedPosY(1,i)= bY2(1) + dot(bY2(2:501),testData(i,1:500)) + ...
+        dot(bY2(502:1001),(testData(i,1:500).^2));
 end
 
 
