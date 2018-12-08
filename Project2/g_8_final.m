@@ -44,11 +44,11 @@ bXgrid = [];
 bYgrid =[]; %size est 960 100, contient tous les by(colonnes) opur chaque alpha et lambda (combinaison)
 FitInfoXgrid =[]; %taille 1 100 (car 10 lambda et 10 alpha (donc les 10 premiers du tableau cest pour le 1e lamdba etc))
 FitInfoYgrid =[];
-alpha =[0.01:0.01:nalpha];
-lambda = [0.005:0.005:nlambda];
+alpha = 0.01:0.01:nalpha;
+lambda = 0.00:0.005:nlambda;
 Yperf=[];
 Xperf=[];
-nl=0.005:0.005:nlambda;
+nl=0.00:0.005:nlambda;
 % for nl=1:1:nlambda
     for na=0.05:0.05:nalpha
         [bX,FitInfoX] = lasso(trainData, trainX,'Alpha',na,'CV',10, ...
@@ -82,7 +82,7 @@ for m = 1:1:n1
     %         %for the plot of the mean squared error
             figure(2)
             semilogx(lambdelastnetX,MSQelnetX,'rx-',lambdelastnetY,MSQelnetY,'bo-')
-            title('semilog scale, lambda in function of the respective MSQ, lasso (b),elastic net (alpha 0.5)(r)elastic net (alpha de 0 à 1 )(x=r)(y=b)')
+            title('semilog scale, lambda in function of the respective MSQ elastic net (alpha de 0 à 1 )(x=r)(y=b)')
             hold on;
             figure(3)
             plot(lambdelastnetX,MSQelnetX,'rx-',lambdelastnetY,MSQelnetY,'bo-')
@@ -151,37 +151,37 @@ for n=1:1:length(Yperf)
         hold on;
 end
 %%
-surface(Xperf,alpha, lambda) % on a un x perf pour chaque combinaison de alpha et lambda
-surface(Yperf,alpha, lambda)%pas afficher en 3d mais en 2d dixit assistants
-view(3)
+% surface(Xperf,alpha, lambda) % on a un x perf pour chaque combinaison de alpha et lambda
+% surface(Yperf,alpha, lambda)%pas afficher en 3d mais en 2d dixit assistants
+% view(3)
 
 %% Surface Plot of MSE
-
-MSEMatrixX = zeros(nalpha/0.05,nlambda/0.005);
-MSEMatrixY = zeros(nalpha/0.05,nlambda/0.005);
-alphaAxis = 0.05:0.05:nalpha;
-lambdaAxis = 0.005:0.005:nlambda;
-
-
-for i=1:1:nalpha/0.05
-    MSEMatrixX(i,:)=FitInfoXgrid(i).MSE;
-    MSEMatrixY(i,:)=FitInfoYgrid(i).MSE;
-end
-
-figure(1);
-surf( lambdaAxis,alphaAxis, MSEMatrixX, ...
-    'FaceAlpha',0.7);
-colorbar
-title ('MSE of Cross-Validation for PosX');
-ylabel ('alpha value');
-xlabel('lambda value');
-zlabel('MSE');
-
-figure(2);
-surf( lambdaAxis,alphaAxis, MSEMatrixY, ...
-    'FaceAlpha',0.7);
-colorbar
-title ('MSE of Cross-Validation for PosY');
-ylabel ('alpha value');
-xlabel('lambda value');
-zlabel('MSE');
+% 
+% MSEMatrixX = zeros(nalpha/0.05,nlambda/0.005);
+% MSEMatrixY = zeros(nalpha/0.05,nlambda/0.005);
+% alphaAxis = 0.05:0.05:nalpha;
+% lambdaAxis = 0.005:0.005:nlambda;
+% 
+% 
+% for i=1:1:nalpha/0.05
+%     MSEMatrixX(i,:)=FitInfoXgrid(i).MSE;
+%     MSEMatrixY(i,:)=FitInfoYgrid(i).MSE;
+% end
+% 
+% figure(4);
+% surf( lambdaAxis,alphaAxis, MSEMatrixX, ...
+%     'FaceAlpha',0.7);
+% colorbar
+% title ('MSE of Cross-Validation for PosX');
+% ylabel ('alpha value');
+% xlabel('lambda value');
+% zlabel('MSE');
+% 
+% figure(5);
+% surf( lambdaAxis,alphaAxis, MSEMatrixY, ...
+%     'FaceAlpha',0.7);
+% colorbar
+% title ('MSE of Cross-Validation for PosY');
+% ylabel ('alpha value');
+% xlabel('lambda value');
+% zlabel('MSE');
