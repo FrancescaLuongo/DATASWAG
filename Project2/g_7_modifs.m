@@ -10,9 +10,9 @@ addpath('functions');
 [mData, nData] = size(Data.Data);
 
 
-trainData = Data.Data(1:round(mData*0.4),:);
-trainX = Data.PosX(1:round(mData*0.4),:);
-trainY = Data.PosY(1:round(mData*0.4),:);
+trainData = Data.Data(1:round(mData*0.3),:);
+trainX = Data.PosX(1:round(mData*0.3),:);
+trainY = Data.PosY(1:round(mData*0.3),:);
 
 [mTrainData, nTrainData] = size(trainData);
 
@@ -67,6 +67,7 @@ rel_cum_variance = cumsum(variance)/sum(variance);
 figure(97)
 plot(rel_cum_variance)
 grid on
+hline(0.95,'r', '95%')
 xlabel('Number of principal components')
 ylabel('Relative cumulative variance')
 hold on;
@@ -118,7 +119,7 @@ testI = ones(mTestData,1);
 FM = projectedTrainingData(:,1:250);
 testFM = projectedTestData(:,1:250);
 
-nIterations = 15;
+nIterations = 2;
 immseIterationTrainX = zeros(1,nIterations);
 immseIterationTrainY = zeros(1,nIterations);
 immseIterationTestX = zeros(1,nIterations);
@@ -144,13 +145,14 @@ end
 
 %% Plot result of regression
 range = 1:nIterations;
+figure;
 plot(range,immseIterationTrainX,'rx', range,immseIterationTrainY,...
     'gx', range,immseIterationTestX,'ro', range,immseIterationTestY,'go');
 
 axis([0 15 0 0.005]);
 
 legend('TrainX MSE','TrainY MSE','TestX MSE', 'TestY MSE');
-
+hold on
 
 
 %% Regression with for loop integration of features (ordre 1)
@@ -178,7 +180,7 @@ for n = 1:nstep:nbFeatures
     perfTestX2= TestRegressionPerformance(testX, testaddedFeatures,bX2,2);
     perfTestY2= TestRegressionPerformance(testY, testaddedFeatures,bY2,2);
     
-    
+    figure;
     plot(n,perfTestX1,'cx',n,perfTestY1,'rx',n,perfTestX2,'gx',n,perfTestY2,'bx')
 %   plot(bX1,bY1,'o')
     hold on;
@@ -192,15 +194,14 @@ end
 
 %% Final regressor
 
-iterationIndex = 1;
-nstep = 50; %nb de features que veut prendre
+nstep = 10; %nb de features que veut prendre
 [exp,nbFeatures] = size(projectedTrainingData(1,:));%nb de features dans la PCA
 
 
 I = ones(mTrainData,1);
 testI = ones(mTestData,1);
 
-nIterations = 6;
+nIterations = 1; 
 immseIterationTrainX = zeros(19,nIterations);
 immseIterationTrainY = zeros(19,nIterations);
 immseIterationTestX = zeros(19,nIterations);
@@ -210,11 +211,74 @@ X = [I];
 XTest = [testI];
 step = 1;
 
-for n = 1:nstep:nbFeatures
+for n = 1:nstep:851
     %regression on the train set, ajoute une feature et fait la regression
      % peut prendre features dans l'ordre ou mieux random? DOIT prendre en
      % ordre!
-
     FM = projectedTrainingData(:,1:n);
     testFM = projectedTestData(:,1:n);
     
+    disp(n);
+    
+    for order = 1:1:nIterations
+        X = [X FM.^order];
+        XTest = [XTest testFM.^order];
+        
+        %bX = regress(trainX, X);
+        bY = regress(trainY, X);
+
+        %immseIterationTrainX(step,order) = immse(trainX, X*bX);
+        %immseIterationTrainY(step,order) = immse(trainY, X*bY);
+
+        %immseIterationTestX(step,order) = immse(testX, XTest*bX); 
+        immseIterationTestY(step,order) = immse(testY, XTest*bY);
+    end
+    X = [I];
+    XTest = [testI];
+    
+    step = step+1;
+
+    
+end
+
+%% 3D PLOTTING RESULTS
+
+coordinateOrder = 1:1:6;
+coordinateFeatures = 1:50:500;
+
+figure(1);
+surf(coordinateOrder, coordinateFeatures, immseIterationTestX(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosX');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');
+
+figure(2);
+surf(coordinateOrder, coordinateFeatures, immseIterationTestY(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosY');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');
+
+figure(3);
+surf(coordinateOrder, coordinateFeatures, immseIterationTrainX(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosY');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');
+
+figure(4);
+surf(coordinateOrder, coordinateFeatures, immseIterationTrainY(1:10,1:6), ...
+    'FaceAlpha',0.7);
+colorbar
+title ('MSE on Test partition for PosY');
+xlabel ('Regression order');
+ylabel('Number of features');
+zlabel('MSE');
+
