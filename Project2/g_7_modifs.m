@@ -281,4 +281,74 @@ title ('MSE on Test partition for PosY');
 xlabel ('Regression order');
 ylabel('Number of features');
 zlabel('MSE');
+%% PLOTTING 2D
 
+coordinateFeatures = 1:50:800;
+
+figure(1);
+hold on;
+
+for i = 1:1:6
+    plot(coordinateFeatures, immseIterationTestX(1:16,i));
+    plot(coordinateFeatures, immseIterationTrainX(1:16,i));
+end
+
+legend('Order 1','Order 2','Order 3','Order 4','Order 5','Order 6');
+xlabel('Number of features');
+ylabel('Mean-Squared Error');
+title('MSE on Train and Test partition for PosX');
+axis([0 750 0 0.01]);
+
+
+coordinateFeatures = 1:50:500;
+
+figure(2);
+hold on;
+
+for i = 1:1:6
+    plot(coordinateFeatures, immseIterationTestY(1:10,i));
+    plot(coordinateFeatures, immseIterationTrainY(1:10,i));
+end
+
+legend('Order 1','Order 2','Order 3','Order 4','Order 5','Order 6');
+xlabel('Number of features');
+ylabel('Mean-Squared Error');
+title('MSE on Train and Test partition for PosY');
+axis([0 450 0 0.008]);
+
+
+hold off;
+
+coordinateFeatures = 1:50:800;
+
+figure(3);
+hold on;
+
+for i = 1:1:6
+    plot(coordinateFeatures, immseIterationTrainX(1:16,i));
+end
+
+legend('Order 1','Order 2','Order 3','Order 4','Order 5','Order 6');
+xlabel('Number of features');
+ylabel('Mean-Squared Error');
+title('MSE on Train partition for PosX');
+axis([0 750 0 0.001]);
+
+
+coordinateFeatures = 1:50:500;
+
+figure(4);
+hold on;
+
+for i = 1:1:6
+    plot(coordinateFeatures, immseIterationTrainY(1:10,i));
+end
+
+legend('Order 1','Order 2','Order 3','Order 4','Order 5','Order 6');
+xlabel('Number of features');
+ylabel('Mean-Squared Error');
+title('MSE on Train partition for PosY');
+axis([0 450 0 0.001]);
+
+
+hold off;

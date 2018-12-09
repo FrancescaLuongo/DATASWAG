@@ -217,4 +217,4 @@ for n = 1:nstep:nbFeatures
 
     FM = projectedTrainingData(:,1:n);
     testFM = projectedTestData(:,1:n);
-    
+end

@@ -125,16 +125,19 @@ text(x+dx, MSEs+dy, c);
 index = 1:1:mTestData;
 predictedPosX = zeros(1, mTestData);
 predictedPosY = zeros(1, mTestData);
+substractionX = zeros(1, mTestData);
 
-%QUESTA COSA HA SENSO PER VOI? A ME SEMBRA DI AVERLA FATTA GIUSTA MA VORREI
-%CONFERMA
 for i=1:1:mTestData
-    predictedPosX(1,i)= bX2(1) + dot(bX2(2:501),testData(i,1:500)) + ...
-        dot(bX2(502:1001),(testData(i,1:500).^2));
-    %CONTROLLARE QUESTO MI DA UN ERRORE GRANDE NEL GRAFICO
-    predictedPosY(1,i)= bY2(1) + dot(bY2(2:101),testData(i,1:100)) + ...
-        dot(bY2(102:201),(testData(i,1:100).^2));
+    predictedPosX(1,i)= bX2(1) + dot(bX2(2:501),projectedTestData(i,1:500)) + ...
+        dot(bX2(502:1001),(projectedTestData(i,1:500).^2));
+
+    predictedPosY(1,i)= bY2(1) + dot(bY2(2:101),projectedTestData(i,1:100)) + ...
+        dot(bY2(102:201),(projectedTestData(i,1:100).^2));
+    
+    substractionX(1,i) = abs(testX(i,1)-predictedPosX(1,i));
+    
 end
+
 
 
 figure(3);
@@ -142,6 +145,10 @@ hold on;
 
 plot(index, predictedPosX, 'b');
 plot(index, testX, 'r');
+legend('Predicted PosX','PosX');
+axis([1300 1600 -0.1 0.25])
+xlabel('Events');
+ylabel('Position');
 
 hold off;
 
@@ -150,6 +157,21 @@ hold on;
 
 plot(index, predictedPosY, 'b');
 plot(index, testY, 'r');
+legend('Predicted PosY','PosY');
+axis([1300 1600 0.12 0.32])
+xlabel('Events');
+ylabel('Position');
+
+
+hold off;
+
+figure(5);
+hold on;
+
+plot(index, substractionX, 'b');
+legend('Substraction of PosX minus predicted PosX');
+
+
 
 hold off;
 
